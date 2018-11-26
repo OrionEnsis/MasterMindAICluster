@@ -1,4 +1,4 @@
-package MasterMind.GUI;
+package MasterMind;
 
 import MasterMind.Game;
 
