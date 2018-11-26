@@ -31,7 +31,7 @@ public class GameBoardPanel extends JPanel {
         setBorder(BorderFactory.createEtchedBorder());
         setSize(220,54*maxGuesses);
 
-        GridLayout g = new GridLayout(maxGuesses+1,1);
+        GridLayout g = new GridLayout(maxGuesses+2,1);
         g.setVgap(2);
         setLayout(g);
 
@@ -49,6 +49,10 @@ public class GameBoardPanel extends JPanel {
             }
         }
         add(answerPanel);
+        JButton b = new JButton();
+        b.setText("Submit");
+        b.setEnabled(true);
+        add(b);
     }
 
 

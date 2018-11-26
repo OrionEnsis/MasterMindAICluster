@@ -28,6 +28,7 @@ public class ColorsPanel extends JPanel {
             this.colors.add(b);
             add(b);
         }
+
         GridLayout g = new GridLayout(colors,1);
         setLayout(g);
         setBorder(BorderFactory.createEtchedBorder());
