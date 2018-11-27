@@ -76,13 +76,27 @@ public class Controller implements ActionListener {
             gui.gameBoardPanel.lockCurrentRow();
 
             //send to game
-            int[] tempResults = {2,2,1,1,0,0};
+            int[] results = game.guess(guess);
+
             //if no win add results
-            updateResults(tempResults);
-            //if not game over unlock next row
-            gui.gameBoardPanel.unlockNextRow();
+            if(!game.checkWin()) {
+                updateResults(results);
+                //if not game over unlock next row
+                if(!game.checkLost()) {
+                    gui.gameBoardPanel.unlockNextRow();
+                }
+                else{
+                    System.out.println("Game OVer");
+                    gui.gameBoardPanel.revealAnswer(game.getAnswer());
+
+                }
+            }
 
             //else you win
+            else{
+                System.out.println("You win");
+                gui.gameBoardPanel.revealAnswer(game.getAnswer());
+            }
         }
         else{
             //TODO invalid error handling.

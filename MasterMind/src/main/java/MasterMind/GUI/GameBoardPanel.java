@@ -8,14 +8,15 @@ import java.util.List;
 
 public class GameBoardPanel extends JPanel {
     public List<SingleGuessPanel> guesses;
-    AnswerPanel answerPanel;
+    private AnswerPanel answerPanel;
     public JButton submitTurnButton;
     int currentGuess;
     int maxGuesses;
     int pegs;
+
     public static void main(String[] args){
         JFrame frame = new JFrame("GameBoard");
-        frame.add( new GameBoardPanel(10,4,null));
+        frame.add( new GameBoardPanel(10,4));
         frame.setLayout(null);
         frame.setSize(400,1200);
         frame.setVisible(true);
@@ -23,11 +24,11 @@ public class GameBoardPanel extends JPanel {
 
     }
 
-    GameBoardPanel(int maxGuesses,int pegs,int[] answer){
+    GameBoardPanel(int maxGuesses,int pegs){
         super();
         this.maxGuesses = maxGuesses;
         guesses = new ArrayList<>();
-        answerPanel = new AnswerPanel(pegs,answer);
+        answerPanel = new AnswerPanel(pegs);
         currentGuess = 0;
         this.pegs = pegs;
 
@@ -51,6 +52,7 @@ public class GameBoardPanel extends JPanel {
                 });
             }
         }
+        this.answerPanel = answerPanel;
         add(answerPanel);
         JButton b = new JButton();
         b.setText("Submit");
@@ -96,4 +98,7 @@ public class GameBoardPanel extends JPanel {
         return guess;
     }
 
+    public void revealAnswer(int[] answer){
+        answerPanel.revealAnswers(answer);
+    }
 }

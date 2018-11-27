@@ -2,10 +2,12 @@ package MasterMind.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AnswerPanel extends JPanel {
     int pegs;
-    private int[] answers;
+    List<JButton> answers;
     public static void main(String[] args){
         JFrame frame = new JFrame("Answer");
         frame.add( new AnswerPanel(4));
@@ -17,6 +19,7 @@ public class AnswerPanel extends JPanel {
 
     AnswerPanel(int pegs){
         super();
+        answers = new ArrayList<>();
         this.pegs = pegs;
         setSize(200,50);
         GridLayout gridLayout = new GridLayout(1,pegs + 1);
@@ -29,17 +32,15 @@ public class AnswerPanel extends JPanel {
             add(button);
             button.setEnabled(false);
             button.setContentAreaFilled(true);
+            answers.add(button);
         }
         setLayout(gridLayout);
     }
 
-    public AnswerPanel(int pegs, int[] answers){
-        this(pegs);
-        this.answers = answers;
-    }
-
-    public int[] checkAnswers(int[] answers){
+    public void revealAnswers(int[] answers){
         //TODO implement
-        return null;
+        for (int i = 0; i < answers.length; i++) {
+            this.answers.get(i).setBackground(GUI.COLORS[answers[i]]);
+        }
     }
 }
