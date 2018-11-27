@@ -2,9 +2,11 @@ package MasterMind.GUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SingleGuessPanel extends JPanel{
-
+    public List<JButton> pegs;
     private PegResultsPanel results;
     public static void main(String[] args){
         JFrame frame = new JFrame("Single Guess");
@@ -15,8 +17,9 @@ public class SingleGuessPanel extends JPanel{
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public SingleGuessPanel(int pegs){
+    SingleGuessPanel(int pegs){
         super();
+        this.pegs = new ArrayList<>();
         setSize(200,50);
         GridLayout gridLayout = new GridLayout(1,pegs + 1);
         setBackground(Color.WHITE);
@@ -26,7 +29,7 @@ public class SingleGuessPanel extends JPanel{
             button.setText("");
             button.setBackground(Color.WHITE);
             add(button);
-
+            this.pegs.add(button);
         }
         setLayout(gridLayout);
         PegResultsPanel p = new PegResultsPanel();

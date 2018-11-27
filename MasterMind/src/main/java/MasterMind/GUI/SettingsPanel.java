@@ -1,11 +1,13 @@
 package MasterMind.GUI;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
 public class SettingsPanel extends JPanel {
-
+    JTextField pegField;
+    JTextField guessField;
+    JTextField colorsField;
+    public JButton newGameButton;
     public static void main(String[] args){
         JFrame frame = new JFrame("Settings");
         frame.add( new SettingsPanel());
@@ -15,7 +17,7 @@ public class SettingsPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public SettingsPanel(){
+    SettingsPanel(){
         super();
         setSize(250,100);
         GridBagLayout bagLayout = new GridBagLayout();
@@ -31,7 +33,7 @@ public class SettingsPanel extends JPanel {
         gridBagConstraints.gridy = 0;
         add(pegLabel,gridBagConstraints);
 
-        JTextField pegField = new JTextField();
+        this.pegField = new JTextField();
         gridBagConstraints.gridx = 1;
         add(pegField,gridBagConstraints);
 
@@ -41,7 +43,7 @@ public class SettingsPanel extends JPanel {
         gridBagConstraints.gridy = 1;
         add(guessLabel,gridBagConstraints);
 
-        JTextField guessField = new JTextField();
+        this.guessField = new JTextField();
         gridBagConstraints.gridx = 1;
         add(guessField,gridBagConstraints);
 
@@ -51,11 +53,11 @@ public class SettingsPanel extends JPanel {
         gridBagConstraints.gridy = 2;
         add(colorsLabel,gridBagConstraints);
 
-        JTextField colorsField = new JTextField();
+        this.colorsField = new JTextField();
         gridBagConstraints.gridx = 1;
         add(colorsField,gridBagConstraints);
 
-        JButton newGameButton = new JButton();
+        this.newGameButton = new JButton();
         newGameButton.setText("New Game!");
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridx = 0;
@@ -64,4 +66,13 @@ public class SettingsPanel extends JPanel {
         add(newGameButton,gridBagConstraints);
     }
 
+    public int getColors(){
+        return Integer.parseInt(colorsField.getText());
+    }
+    public int getPegs(){
+        return Integer.parseInt(pegField.getText());
+    }
+    public int getGuesses(){
+        return Integer.parseInt(guessField.getText());
+    }
 }

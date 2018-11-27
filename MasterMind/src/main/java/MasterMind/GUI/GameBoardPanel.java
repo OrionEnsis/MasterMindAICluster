@@ -7,10 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GameBoardPanel extends JPanel {
-    List<SingleGuessPanel> guesses;
+    public List<SingleGuessPanel> guesses;
     AnswerPanel answerPanel;
+    public JButton submitTurnButton;
     int currentGuess;
     int maxGuesses;
+    int pegs;
     public static void main(String[] args){
         JFrame frame = new JFrame("GameBoard");
         frame.add( new GameBoardPanel(10,4,null));
@@ -21,12 +23,13 @@ public class GameBoardPanel extends JPanel {
 
     }
 
-    public GameBoardPanel(int maxGuesses,int pegs,int[] answer){
+    GameBoardPanel(int maxGuesses,int pegs,int[] answer){
         super();
         this.maxGuesses = maxGuesses;
         guesses = new ArrayList<>();
         answerPanel = new AnswerPanel(pegs,answer);
         currentGuess = 0;
+        this.pegs = pegs;
 
         setBorder(BorderFactory.createEtchedBorder());
         setSize(220,54*maxGuesses);
@@ -53,7 +56,44 @@ public class GameBoardPanel extends JPanel {
         b.setText("Submit");
         b.setEnabled(true);
         add(b);
+        submitTurnButton = b;
     }
 
+    public SingleGuessPanel getCurrentTurn(){
+        return guesses.get(currentGuess);
+    }
+
+    public int getCurrentGuess() {
+        return currentGuess;
+    }
+    public void lockCurrentRow(){
+        SingleGuessPanel singleGuessPanel = guesses.get(currentGuess);
+        singleGuessPanel.pegs.forEach(b->b.setEnabled(false));
+    }
+
+    public void unlockNextRow(){
+        currentGuess++;
+        SingleGuessPanel singleGuessPanel = guesses.get(currentGuess);
+        singleGuessPanel.pegs.forEach(b->{
+            b.setEnabled(true);
+            b.setBackground(Color.WHITE);
+        });
+
+    }
+
+    public int[] getGuess(){
+        int[] guess = new int[pegs];
+        List<JButton> pegs = guesses.get(currentGuess).pegs;
+        Arrays.fill(guess,-1);
+        for (int i = 0; i < pegs.size(); i++) {
+            for (int j = 0; j < GUI.COLORS.length; j++) {
+                if(pegs.get(i).getBackground().equals(GUI.COLORS[j])){
+                    guess[i] = j;
+                    break;
+                }
+            }
+        }
+        return guess;
+    }
 
 }

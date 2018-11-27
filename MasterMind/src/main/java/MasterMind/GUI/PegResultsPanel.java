@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PegResultsPanel extends JPanel {
-
+    static Color[] resultColors = {Color.LIGHT_GRAY,Color.WHITE,Color.black};
     public static void main(String[] args){
         JFrame frame = new JFrame("PegResultsFrame");
         frame.add( new PegResultsPanel());
@@ -14,7 +14,7 @@ public class PegResultsPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public PegResultsPanel(){
+    PegResultsPanel(){
         super();
         setSize(50,50);
         GridLayout gridLayout = new GridLayout(2,3);
@@ -25,19 +25,16 @@ public class PegResultsPanel extends JPanel {
         for (int i = 0; i < 6; i++) {
             JPanel p = new JPanel();
             p.setBorder(BorderFactory.createEtchedBorder());
+            p.setBackground(resultColors[0]);
             add(p);
         }
     }
 
-    public PegResultsPanel(Color[] colors){
-        this();
-        setResults(colors);
-    }
 
-    public void setResults(Color[] colors){
+    public void setResults(int[] colors){
         Component[] c = getComponents();
         for (int i = 0; i < c.length; i++) {
-            c[i].setBackground(colors[i]);
+            c[i].setBackground(resultColors[colors[i]]);
         }
     }
 }
