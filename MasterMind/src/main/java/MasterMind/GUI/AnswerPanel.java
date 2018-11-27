@@ -38,7 +38,6 @@ public class AnswerPanel extends JPanel {
     }
 
     public void revealAnswers(int[] answers){
-        //TODO implement
         for (int i = 0; i < answers.length; i++) {
             this.answers.get(i).setBackground(GUI.COLORS[answers[i]]);
         }

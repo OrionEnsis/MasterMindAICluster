@@ -59,10 +59,10 @@ public class Controller implements ActionListener {
         //reset(pegs,guess,colors,null);
     }
 
-    //TODO Implement
-    void playTurn(){
+    int[] playTurn(){
         //check/verify valid submission
         int[] guess = getGuessFromPegs();
+        int[] results = null;
         boolean b = true;
         for (int gues : guess) {
             if (gues == -1) {
@@ -76,7 +76,7 @@ public class Controller implements ActionListener {
             gui.gameBoardPanel.lockCurrentRow();
 
             //send to game
-            int[] results = game.guess(guess);
+            results = game.guess(guess);
 
             //if no win add results
             if(!game.checkWin()) {
@@ -101,6 +101,7 @@ public class Controller implements ActionListener {
         else{
             //TODO invalid error handling.
         }
+        return results;
     }
 
     private void updateResults(int[] results) {
@@ -131,15 +132,11 @@ public class Controller implements ActionListener {
     int[] getGuessFromPegs(){
         return gui.gameBoardPanel.getGuess();
     }
-    //TODO Implement
-    //AI Latch for gui
-    void updatePegs(int[] guess){
-        //update peg colors.
-    }
-    //TODO Implement
+
     //latch for AI to play
     int[] submit(int[] guess){
         //ask game for result
-        return null;
+        gui.gameBoardPanel.updateCurrentGuess(guess);
+        return playTurn();
     }
 }

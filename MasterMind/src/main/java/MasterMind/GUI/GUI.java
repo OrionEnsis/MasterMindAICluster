@@ -10,6 +10,7 @@ public class GUI extends JFrame{
     public ColorsPanel colorsPanel;
     public SettingsPanel settingsPanel;
 
+    //TODO set up references to use Game instance
     public GUI(){
         super("MasterMind");
         setSize(1000,600);
@@ -45,7 +46,6 @@ public class GUI extends JFrame{
     }
     public void setupColors(int colors){
         colorsPanel = new ColorsPanel(colors);
-        //TODO handle location.
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

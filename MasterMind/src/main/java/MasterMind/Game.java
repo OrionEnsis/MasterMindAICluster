@@ -1,9 +1,6 @@
 package MasterMind;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Game {
     private int currentGuesses;
@@ -13,7 +10,8 @@ public class Game {
     private int[] answer;
     private boolean hasWon = false;
     private boolean hasLost = false;
-
+    public List<int[]> pastGuesses;
+    public List<int[]> pastResults;
     public Game(){
         //make a game with default solutions
         this(15,8,6);
@@ -24,6 +22,8 @@ public class Game {
         this.guesses = guesses;
         this.colors = colors;
         this.pegs = pegs;
+        pastGuesses = new ArrayList<>();
+        pastResults = new ArrayList<>();
         generateAnswer();
     }
 
@@ -55,6 +55,7 @@ public class Game {
             }
         }
 
+
         Arrays.sort(result);
         for(int i = 0; i < result.length / 2; i++)
         {
@@ -74,7 +75,8 @@ public class Game {
         currentGuesses++;
         if(guesses == currentGuesses)
             hasLost = true;
-
+        pastGuesses.add(guess);
+        pastResults.add(result);
         return result;
     }
 
@@ -88,5 +90,13 @@ public class Game {
 
     public boolean checkLost() {
         return hasLost;
+    }
+
+    public int getColors() {
+        return colors;
+    }
+
+    public int getPegs() {
+        return pegs;
     }
 }

@@ -52,7 +52,7 @@ public class GameBoardPanel extends JPanel {
                 });
             }
         }
-        this.answerPanel = answerPanel;
+
         add(answerPanel);
         JButton b = new JButton();
         b.setText("Submit");
@@ -81,6 +81,10 @@ public class GameBoardPanel extends JPanel {
             b.setBackground(Color.WHITE);
         });
 
+    }
+
+    public void updateCurrentGuess(int[] guess){
+        getCurrentTurn().setPegs(guess);
     }
 
     public int[] getGuess(){
