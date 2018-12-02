@@ -1,5 +1,7 @@
 package MasterMind.GUI;
 
+import MasterMind.Game;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -11,11 +13,11 @@ public class GUI extends JFrame{
     public SettingsPanel settingsPanel;
 
     //TODO set up references to use Game instance
-    public GUI(){
+    public GUI(Game game){
         super("MasterMind");
         setSize(1000,600);
         setLayout( new GridBagLayout());
-        reset(6,15,8);
+        reset(game.getPegs(),game.getGuesses(),game.getColors());
         setupSettings();
 
     }
@@ -74,10 +76,4 @@ public class GUI extends JFrame{
         add(gameBoardPanel,gridBagConstraints);
     }
 
-    public static void main(String[] args){
-        GUI frame = new GUI();
-        frame.setVisible(true);
-        //frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    }
 }

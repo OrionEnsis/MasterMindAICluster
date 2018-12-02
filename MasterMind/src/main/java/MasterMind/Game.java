@@ -14,7 +14,7 @@ public class Game {
     public List<int[]> pastResults;
     public Game(){
         //make a game with default solutions
-        this(15,8,6);
+        this(15,8,3);
     }
 
     public Game(int guesses, int colors, int pegs){
@@ -43,7 +43,7 @@ public class Game {
                 result[i] = 1;
             }
         }
-        //TODO partial correct answers
+
         for (int i = 0; i < answer.length; i++) {
             if(result[i] != 1){
                 for (int j = 0; j < answer.length; j++) {
@@ -98,5 +98,9 @@ public class Game {
 
     public int getPegs() {
         return pegs;
+    }
+
+    public int getGuesses() {
+        return guesses;
     }
 }
