@@ -2,6 +2,7 @@ package MasterMind.AI;
 
 import MasterMind.Game;
 import java.util.*;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
 
@@ -30,22 +31,20 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
 
         }
         end = allPotentialPlays.size();
-    }
-    public void addRule(Rule rule){
-        rules.add(rule);
-        removeInvalid(rule);
+        depth = 2;
     }
 
-    void removeInvalid(Rule rule) {
-        //allPotentialPlays.parallelStream().forEach(x-> rule.followsRules(x.getPlayAsArray()));
-        allPotentialPlays = allPotentialPlays.stream().filter(x-> rule.followsRules(x.getPlayAsArray())).collect(Collectors.toList());
-    }
 
-    private AI(Game game, int start, int end, int depth){
+    private AI(Game game, int start, int end){
         this(game);
         this.start = start;
         this.end = end;
         this.depth = depth;
+    }
+
+    public AI(Game game, int i) {
+        this(game);
+        depth = i;
     }
 
     @Override
@@ -61,17 +60,27 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         return result;
     }
 
+    public void addRule(Rule rule){
+        rules.add(rule);
+        removeInvalid(rule);
+    }
+
+    void removeInvalid(Rule rule) {
+        //allPotentialPlays.parallelStream().forEach(x-> rule.followsRules(x.getPlayAsArray()));
+        allPotentialPlays = allPotentialPlays.stream().filter(x-> rule.followsRules(x.getPlayAsArray())).collect(Collectors.toList());
+    }
+
     private SinglePlay split() {
         int split = end - start;
         split = split/2;
-        AI ai1 = new AI(game,start,start+split,depth-1);
-        AI ai2 = new AI(game,start+split,end,depth-1);
+        AI ai1 = new AI(game,start,start+split);
+        AI ai2 = new AI(game,start+split,end);
         ai1.fork();
 
         SinglePlay ai2Result = ai2.compute();
         SinglePlay ai1Result = ai1.join();
 
-        if(score(ai1Result)>score(ai2Result)){
+        if(ai1Result.getScore() > ai2Result.getScore()){
             return ai1Result;
         }
         else{
@@ -80,16 +89,16 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     }
     private SinglePlay doWork() {
         SinglePlay currentWinner = new SinglePlay(-1,game.getPegs());
-        int highScore = -1;
+        int highScore = Integer.MAX_VALUE;
 
         for(int i = start; i < end; i++) {
             //get the rules for scoring this round.
             //System.out.println(i + " valid");
             //score them all. //TODO add depth searching by getting iterating through all valid options.  Award points for each different peg this possibility allows.
-            allPotentialPlays.get(i).determineScore();
+            determineScore(allPotentialPlays.get(i));
 
             //compare to current leader...smaller one wins
-            if(highScore < allPotentialPlays.get(i).getScore()){
+            if(highScore > allPotentialPlays.get(i).getScore()){
                 currentWinner = allPotentialPlays.get(i);
                 highScore = currentWinner.getScore();
             }
@@ -98,10 +107,27 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         return currentWinner;
     }
 
-    private static double score(SinglePlay entry){
-        //for matching all possibilities/colors^correct
-        //for right color result/pegs^almost
-        return 0;
+    private void determineScore(SinglePlay singlePlay) {
+        if(depth != 0){
+            int sum = 0;
+             //ForkJoinPool forkJoinPool = new ForkJoinPool();
+            //for every value of win and maybe add as new rule.
+            for (int i = 0; i < game.getPegs(); i++) {
+                for (int j = 0; j < game.getPegs() - i; j++) {
+                    System.out.println("new Pool");
+                    AI ai = new AI(game,depth-1);
+                    ai.addRule(new Rule(singlePlay.getPlayAsArray(),i,j));
+                    sum += ai.compute().getScore();
+                    //ai.quietlyJoin();
+
+                }
+            }
+            //get the sum
+            singlePlay.score = allPotentialPlays.stream().mapToInt(x->x.getScore()).sum();
+        }
+        else{
+            singlePlay.score = allPotentialPlays.size();
+        }
     }
 
     @Override

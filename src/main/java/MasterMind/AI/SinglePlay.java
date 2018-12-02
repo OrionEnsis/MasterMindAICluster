@@ -16,12 +16,6 @@ public class SinglePlay {
         return ((bitGuess >>>(3*position)) & 0x7);
     }
 
-    //TODO reimplement
-    public int determineScore(){
-        score = 1;
-
-        return score;
-    }
 
     public int getScore() {
         return score;

@@ -12,6 +12,12 @@ public class Rule {
     int mustNotHave;
     int[] guess;
 
+    public Rule(int[] guess, int must, int may){
+        this.mustHave = must;
+        this.mayHave = may;
+        this.guess = guess;
+        mustNotHave = 0;
+    }
     public Rule(int[] guess, int[] results){
         this.guess = guess;
         for (int result : results) {
@@ -38,6 +44,7 @@ public class Rule {
             }
         }
 
+        //TODO fix this section.
         for (int i = 0; i < compareGuess.length; i++) {
             if(dupeStopper[i] != 1){
                 for (int j = 0; j < compareGuess.length; j++) {
@@ -50,7 +57,7 @@ public class Rule {
             }
         }
 
-        return match == mustHave && mayHave == shift;
+        return match == mustHave;// && mayHave == shift;
         /*
         int[] currentResults = new int[guess.length];
         Arrays.fill(currentResults,4);

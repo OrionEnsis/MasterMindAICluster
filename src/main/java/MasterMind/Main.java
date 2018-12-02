@@ -8,7 +8,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class Main {
     public static void main(String[] args){
-        Game game = new Game(15,8,5);
+        Game game = new Game(15,8,4);
         ForkJoinPool pool = new ForkJoinPool();
         GUI frame = new GUI(game);
         frame.setVisible(true);
@@ -16,7 +16,7 @@ public class Main {
         Controller controller = new Controller(frame,game);
 
         AI ai;
-        int[] temp = {0,0,0,0,0};//,1,1,1};
+        int[] temp = {0,1,2,3};//,4,5};//,1,1,1};
         controller.submit(temp);
         while(!game.checkLost() && !game.checkWin()){
             ai = new AI(game);

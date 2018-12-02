@@ -17,12 +17,12 @@ public class PegResultsPanel extends JPanel {
     PegResultsPanel(){
         super();
         setSize(50,50);
-        GridLayout gridLayout = new GridLayout(2,3);
+        GridLayout gridLayout = new GridLayout(2,4);
         gridLayout.setHgap(2);
         gridLayout.setVgap(2);
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(gridLayout);
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 8; i++) {
             JPanel p = new JPanel();
             p.setBorder(BorderFactory.createEtchedBorder());
             p.setBackground(resultColors[0]);
