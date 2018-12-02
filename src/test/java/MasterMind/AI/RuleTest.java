@@ -28,7 +28,7 @@ public class RuleTest {
         int[] ruleResult = {0,0,0,0};
         int[] newGuess = {5,5,5,5};
         int[] newResult = {4,4,4,4};
-        int[] expectedResult = {4,4,4,4};
+        int[] expectedResult = {0,0,0,0};
 
         Rule r = new Rule(ruleGuess,ruleResult);
         r.mustNotInclude(newGuess, newResult);
@@ -42,7 +42,7 @@ public class RuleTest {
         int[] ruleResult = {2,2,0,0};
         int[] newGuess = {4,4,4,4};
         int[] newResult = {4,4,4,4};
-        int[] expectedResult = {4,4,4,0};
+        int[] expectedResult = {0,0,0,4};
 
         Rule r = new Rule(ruleGuess,ruleResult);
         r.mustNotInclude(newGuess,newResult);
@@ -56,7 +56,7 @@ public class RuleTest {
         int[] ruleResult = {2,2,0,0};
         int[] newGuess = {5,3,3,4};
         int[] newResult = {4,4,4,4};
-        int[] expectedResult = {0,4,0,0};
+        int[] expectedResult = {0,4,4,4};
 
         Rule r = new Rule(ruleGuess,ruleResult);
         r.mustNotInclude(newGuess,newResult);

@@ -13,7 +13,7 @@ public class SinglePlay {
 
     //TODO write tests for this.  These should be correct.
     public int getPegColor(int position){
-        return ((bitGuess >>>(4*position)) & 0x8);
+        return ((bitGuess >>>(3*position)) & 0x7);
     }
 
     //TODO reimplement
@@ -31,7 +31,7 @@ public class SinglePlay {
         //TODO
         int[] temp = new int[pegs];
         for (int i = 0; i < pegs; i++) {
-            temp[i] = ((bitGuess >>>(4*i)) & 0x7);
+            temp[i] = ((bitGuess >>>(3*i)) & 0x7);
         }
         return temp;
     }

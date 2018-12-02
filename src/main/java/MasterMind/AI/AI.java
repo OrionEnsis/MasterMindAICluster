@@ -3,12 +3,13 @@ package MasterMind.AI;
 import MasterMind.Game;
 import java.util.*;
 import java.util.concurrent.RecursiveTask;
+import java.util.stream.Collectors;
 
 //TODO thought: for double depth testing have them be judged by the metric of the sum of the 2 members with bonus based on how different they are.
 //TODO set up for Single play?
-public class AI extends RecursiveTask<int[]> implements Comparator<SinglePlay> {
+public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePlay> {
 
-    private List<SinglePlay> allPotentialPlays = new LinkedList<>();
+    public  List<SinglePlay> allPotentialPlays = new LinkedList<>();
     private Game game;
     private static final int THRESHOLD = 5000;
     private int start;
@@ -19,16 +20,25 @@ public class AI extends RecursiveTask<int[]> implements Comparator<SinglePlay> {
     public AI(Game game){
         super();
         this.game = game;
-        int totalRemainingPossibilities = (int)Math.pow((double) game.getColors(), (double) game.getPegs());
+        int totalRemainingPossibilities = (int)Math.pow((double) game.getColors(),(double) game.getPegs());
         start = 0;
-        end = totalRemainingPossibilities;
         for (int i = 0; i < totalRemainingPossibilities; i++) {
             allPotentialPlays.add(new SinglePlay(i,game.getPegs()));
         }
         for (int i = 0; i < game.pastResults.size(); i++) {
-            rules.add(new Rule(game.pastGuesses.get(i),game.pastResults.get(i)));
-        }
+            addRule(new Rule(game.pastGuesses.get(i),game.pastResults.get(i)));
 
+        }
+        end = allPotentialPlays.size();
+    }
+    public void addRule(Rule rule){
+        rules.add(rule);
+        removeInvalid(rule);
+    }
+
+    void removeInvalid(Rule rule) {
+        //allPotentialPlays.parallelStream().forEach(x-> rule.followsRules(x.getPlayAsArray()));
+        allPotentialPlays = allPotentialPlays.stream().filter(x-> rule.followsRules(x.getPlayAsArray())).collect(Collectors.toList());
     }
 
     private AI(Game game, int start, int end, int depth){
@@ -39,25 +49,27 @@ public class AI extends RecursiveTask<int[]> implements Comparator<SinglePlay> {
     }
 
     @Override
-    protected int[] compute() {
-        int result[];
+    protected SinglePlay compute() {
+        SinglePlay result;
         if((end-start) < THRESHOLD) {
-            System.out.println("Doing Work" + (end -start));
+            System.out.println("Doing Work " + (end -start));
             result = doWork();
         }else {
-            System.out.println("Splitting" + (end -start));
+            System.out.println("Splitting " + (end -start));
             result = split();
         }
         return result;
     }
 
-    private int[] split() {
-        AI ai1 = new AI(game,start,end/2,depth-1);
-        AI ai2 = new AI(game,end/2,end,depth-1);
+    private SinglePlay split() {
+        int split = end - start;
+        split = split/2;
+        AI ai1 = new AI(game,start,start+split,depth-1);
+        AI ai2 = new AI(game,start+split,end,depth-1);
         ai1.fork();
 
-        int[] ai2Result = ai2.compute();
-        int[] ai1Result = ai1.join();
+        SinglePlay ai2Result = ai2.compute();
+        SinglePlay ai1Result = ai1.join();
 
         if(score(ai1Result)>score(ai2Result)){
             return ai1Result;
@@ -66,41 +78,27 @@ public class AI extends RecursiveTask<int[]> implements Comparator<SinglePlay> {
             return ai2Result;
         }
     }
-
-    private int[] doWork() {
+    private SinglePlay doWork() {
         SinglePlay currentWinner = new SinglePlay(-1,game.getPegs());
         int highScore = -1;
-        if(game.pastGuesses.size()>rules.size()){
-            for (int i =0; i < game.pastGuesses.size(); i++) {
-                if(i >= rules.size())
-                    rules.add(new Rule(game.pastGuesses.get(i),game.pastResults.get(i)));
-            }
-        }
-        outer: for(int i = start; i < end; i++) {
-            //get the rules for scoring this round.
-            for (Rule r : rules) {
-                if (!r.followsRules(allPotentialPlays.get(i).getPlayAsArray())){
-                    System.out.println("invalid member found");
-                    continue outer;
-                }
-            }
 
+        for(int i = start; i < end; i++) {
+            //get the rules for scoring this round.
+            //System.out.println(i + " valid");
             //score them all. //TODO add depth searching by getting iterating through all valid options.  Award points for each different peg this possibility allows.
             allPotentialPlays.get(i).determineScore();
 
             //compare to current leader...smaller one wins
             if(highScore < allPotentialPlays.get(i).getScore()){
                 currentWinner = allPotentialPlays.get(i);
-                highScore = currentWinner.getScore();}
-//            }else if(highScore == allPotentialPlays.get(i).getScore() && Math.random() %2 == 0 ){
-//                currentWinner = allPotentialPlays.get(i);
-//            }
+                highScore = currentWinner.getScore();
+            }
         }
         //return smallest
-        return currentWinner.getPlayAsArray();
+        return currentWinner;
     }
 
-    private static double score(int[] entry){
+    private static double score(SinglePlay entry){
         //for matching all possibilities/colors^correct
         //for right color result/pegs^almost
         return 0;
