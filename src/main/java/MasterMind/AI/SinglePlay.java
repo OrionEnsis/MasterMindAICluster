@@ -11,7 +11,7 @@ public class SinglePlay {
         this.pegs = pegs;
     }
 
-    public void setScore(int score) {
+    void setScore(int score) {
         this.score = score;
     }
 
