@@ -10,7 +10,7 @@ public class GUI extends JFrame{
     static Color[] COLORS = {Color.BLUE, Color.RED, Color.GREEN, Color.YELLOW, Color.MAGENTA, Color.CYAN, Color.ORANGE, Color.pink};
     public GameBoardPanel gameBoardPanel;
     public ColorsPanel colorsPanel;
-    public SettingsPanel settingsPanel;
+    //public SettingsPanel settingsPanel;
 
     //TODO set up references to use Game instance
     public GUI(Game game){
@@ -18,9 +18,9 @@ public class GUI extends JFrame{
         setSize(1000,600);
         setLayout( new GridBagLayout());
         reset(game.getPegs(),game.getGuesses(),game.getColors());
-        setupSettings();
+        //setupSettings();
 
-    }
+    }/*
     void setupSettings(){
         settingsPanel = new SettingsPanel();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
@@ -33,7 +33,7 @@ public class GUI extends JFrame{
         gridBagConstraints.weighty = 0;
         gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
         add(settingsPanel,gridBagConstraints);
-    }
+    }*/
     void reset(int pegs, int guesses, int colors){
         if(gameBoardPanel != null){
             remove(gameBoardPanel);

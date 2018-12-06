@@ -19,7 +19,7 @@ public class Controller implements ActionListener {
     }
 
     private void setupListeners() {
-        gui.settingsPanel.newGameButton.addActionListener(this);
+        //gui.settingsPanel.newGameButton.addActionListener(this);
         gui.gameBoardPanel.submitTurnButton.addActionListener(this);
         gui.gameBoardPanel.guesses.forEach(g->g.pegs.forEach(p->p.addActionListener(this)));
         gui.colorsPanel.colors.forEach(b->b.addActionListener(this));
@@ -28,9 +28,9 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton)e.getSource();
-        if(b.getText().equals("New Game!")){
+        /*if(b.getText().equals("New Game!")){
             newGame();
-        }
+        }*/
         //if submit button was pressed
         if(b.getText().equals("Submit")){
             System.out.println("Submit pressed");
@@ -51,13 +51,13 @@ public class Controller implements ActionListener {
     }
 
     //TODO allow for remaking of window.
-    void newGame(){
+    /*void newGame(){
         int pegs = gui.settingsPanel.getPegs();
         int guess = gui.settingsPanel.getGuesses();
         int colors = gui.settingsPanel.getColors();
 
         //reset(pegs,guess,colors,null);
-    }
+    }*/
 
     int[] playTurn(){
         //check/verify valid submission
