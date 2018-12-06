@@ -10,9 +10,8 @@ public class GameBoardPanel extends JPanel {
     public List<SingleGuessPanel> guesses;
     private AnswerPanel answerPanel;
     public JButton submitTurnButton;
-    int currentGuess;
-    int maxGuesses;
-    int pegs;
+    private int currentGuess;
+    private int pegs;
 
     public static void main(String[] args){
         JFrame frame = new JFrame("GameBoard");
@@ -26,7 +25,6 @@ public class GameBoardPanel extends JPanel {
 
     GameBoardPanel(int maxGuesses,int pegs){
         super();
-        this.maxGuesses = maxGuesses;
         guesses = new ArrayList<>();
         answerPanel = new AnswerPanel(pegs);
         currentGuess = 0;
