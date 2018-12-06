@@ -34,7 +34,7 @@ public class GUI extends JFrame{
         gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
         add(settingsPanel,gridBagConstraints);
     }*/
-    void reset(int pegs, int guesses, int colors){
+    private void reset(int pegs, int guesses, int colors){
         if(gameBoardPanel != null){
             remove(gameBoardPanel);
         }
@@ -46,7 +46,7 @@ public class GUI extends JFrame{
         setupColors(colors);
         setupBoard(pegs,guesses);
     }
-    public void setupColors(int colors){
+    private void setupColors(int colors){
         colorsPanel = new ColorsPanel(colors);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -62,7 +62,7 @@ public class GUI extends JFrame{
         colorsPanel.setVisible(true);
 
     }
-    public void setupBoard(int pegs, int guesses){
+    private void setupBoard(int pegs, int guesses){
         gameBoardPanel = new GameBoardPanel(guesses,pegs);
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 7;

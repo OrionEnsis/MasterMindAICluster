@@ -4,10 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SettingsPanel extends JPanel {
-    JTextField pegField;
-    JTextField guessField;
-    JTextField colorsField;
-    public JButton newGameButton;
+    private JTextField pegField;
+    private JTextField guessField;
+    private JTextField colorsField;
+    private JButton newGameButton;
     public static void main(String[] args){
         JFrame frame = new JFrame("Settings");
         frame.add( new SettingsPanel());
@@ -17,7 +17,7 @@ public class SettingsPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    SettingsPanel(){
+    private SettingsPanel(){
         super();
         setSize(250,100);
         GridBagLayout bagLayout = new GridBagLayout();

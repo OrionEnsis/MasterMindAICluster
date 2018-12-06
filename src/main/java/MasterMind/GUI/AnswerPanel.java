@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AnswerPanel extends JPanel {
-    int pegs;
-    List<JButton> answers;
+
+    private List<JButton> answers;
     public static void main(String[] args){
         JFrame frame = new JFrame("Answer");
         frame.add( new AnswerPanel(4));
@@ -20,7 +20,6 @@ public class AnswerPanel extends JPanel {
     AnswerPanel(int pegs){
         super();
         answers = new ArrayList<>();
-        this.pegs = pegs;
         setSize(200,50);
         GridLayout gridLayout = new GridLayout(1,pegs + 1);
         setBackground(Color.WHITE);
@@ -37,7 +36,7 @@ public class AnswerPanel extends JPanel {
         setLayout(gridLayout);
     }
 
-    public void revealAnswers(int[] answers){
+    void revealAnswers(int[] answers){
         for (int i = 0; i < answers.length; i++) {
             this.answers.get(i).setBackground(GUI.COLORS[answers[i]]);
         }

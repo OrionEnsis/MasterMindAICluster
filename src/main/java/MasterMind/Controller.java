@@ -19,7 +19,7 @@ public class Controller implements ActionListener {
     }
 
     private void setupListeners() {
-        //gui.settingsPanel.newGameButton.addActionListener(this);
+        //gui.settingsPanel.newGameButton.addActionListener(this); //TODO change this to choose between player and AI
         gui.gameBoardPanel.submitTurnButton.addActionListener(this);
         gui.gameBoardPanel.guesses.forEach(g->g.pegs.forEach(p->p.addActionListener(this)));
         gui.colorsPanel.colors.forEach(b->b.addActionListener(this));
@@ -28,9 +28,7 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton)e.getSource();
-        /*if(b.getText().equals("New Game!")){
-            newGame();
-        }*/
+
         //if submit button was pressed
         if(b.getText().equals("Submit")){
             System.out.println("Submit pressed");
@@ -47,19 +45,10 @@ public class Controller implements ActionListener {
         if(gui.gameBoardPanel.guesses.get(gui.gameBoardPanel.getCurrentGuess()).pegs.contains(b)){
             changePegColor(b);
         }
-        //change peg to active color.
     }
 
-    //TODO allow for remaking of window.
-    /*void newGame(){
-        int pegs = gui.settingsPanel.getPegs();
-        int guess = gui.settingsPanel.getGuesses();
-        int colors = gui.settingsPanel.getColors();
 
-        //reset(pegs,guess,colors,null);
-    }*/
-
-    int[] playTurn(){
+    private int[] playTurn(){
         //check/verify valid submission
         int[] guess = getGuessFromPegs();
         int[] results = null;
@@ -109,7 +98,7 @@ public class Controller implements ActionListener {
         pegPanel.setResults(results);
     }
 
-    void changeHighlightedColor(JButton b){
+    private void changeHighlightedColor(JButton b){
         //if previous highlighted color, unhighlight.
         if(gui.colorsPanel.currentColor != null) {
             //set new color to highlighted.
@@ -121,7 +110,7 @@ public class Controller implements ActionListener {
     }
 
 
-    void changePegColor(JButton peg){
+    private void changePegColor(JButton peg){
         //if there is highlighted color.
         if(gui.colorsPanel.currentColor != null){
             //change peg to that color.
@@ -129,14 +118,14 @@ public class Controller implements ActionListener {
         }
     }
 
-    int[] getGuessFromPegs(){
+    private int[] getGuessFromPegs(){
         return gui.gameBoardPanel.getGuess();
     }
 
     //latch for AI to play
-    int[] submit(int[] guess){
+    void submit(int[] guess){
         //ask game for result
         gui.gameBoardPanel.updateCurrentGuess(guess);
-        return playTurn();
+        playTurn();
     }
 }

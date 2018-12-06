@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PegResultsPanel extends JPanel {
-    static Color[] resultColors = {Color.LIGHT_GRAY,Color.black,Color.WHITE};
+    private static Color[] resultColors = {Color.LIGHT_GRAY,Color.black,Color.WHITE};
     public static void main(String[] args){
         JFrame frame = new JFrame("PegResultsFrame");
         frame.add( new PegResultsPanel());

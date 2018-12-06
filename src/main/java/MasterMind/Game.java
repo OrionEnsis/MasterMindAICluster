@@ -12,12 +12,8 @@ public class Game {
     private boolean hasLost = false;
     public List<int[]> pastGuesses;
     public List<int[]> pastResults;
-    public Game(){
-        //make a game with default solutions
-        this(15,8,3);
-    }
 
-    public Game(int guesses, int colors, int pegs){
+    Game(int guesses, int colors, int pegs){
         this.currentGuesses = 0;
         this.guesses = guesses;
         this.colors = colors;
@@ -35,7 +31,7 @@ public class Game {
         }
     }
 
-    public int[] guess(int[] guess){
+    int[] guess(int[] guess){
         int[] result = new int[guess.length];
         //correct answers
         for (int i = 0; i < answer.length; i++) {
@@ -63,7 +59,7 @@ public class Game {
             result[i] = result[result.length - i - 1];
             result[result.length - i - 1] = temp;
         }
-        //TODO turn into its own method
+
         boolean b = true;
         for (int aResult : result) {
             if (aResult != 1) {
@@ -80,15 +76,15 @@ public class Game {
         return result;
     }
 
-    public int[] getAnswer(){
+    int[] getAnswer(){
         return answer;
     }
 
-    public boolean checkWin() {
+    boolean checkWin() {
         return hasWon;
     }
 
-    public boolean checkLost() {
+    boolean checkLost() {
         return hasLost;
     }
 
