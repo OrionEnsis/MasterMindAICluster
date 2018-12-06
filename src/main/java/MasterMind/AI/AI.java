@@ -2,12 +2,9 @@ package MasterMind.AI;
 
 import MasterMind.Game;
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
 
-//TODO thought: for double depth testing have them be judged by the metric of the sum of the 2 members with bonus based on how different they are.
-//TODO set up for Single play?
 public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePlay> {
 
     public List<SinglePlay> allPotentialPlays = new LinkedList<>();
@@ -16,7 +13,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     private int start;
     private int end;
     private int depth;
-    private List<Rule> rules = new ArrayList<>();
+    private List<Rule> rules = new ArrayList<>(); //we don't need this, but keeping it around just in case we need it.
 
     public AI(Game game){
         super();
@@ -34,18 +31,15 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         depth = 1;
     }
 
-
     private AI(Game game, int start, int end, List<SinglePlay> list){
-        //this(game);
         this.allPotentialPlays = list;
         this.start = start;
         this.end = end;
-        //
         this.game = game;
         depth = 1;
     }
 
-    public AI(Game game,List<SinglePlay> list, int i) {
+    private AI(Game game,List<SinglePlay> list, int i) {
         this.game = game;
         this.allPotentialPlays = list;
         start = 0;
@@ -66,12 +60,12 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         return result;
     }
 
-    public void addRule(Rule rule){
+    private void addRule(Rule rule){
         rules.add(rule);
         removeInvalid(rule);
     }
 
-    void removeInvalid(Rule rule) {
+    private void removeInvalid(Rule rule) {
         //allPotentialPlays.parallelStream().forEach(x-> rule.followsRules(x.getPlayAsArray()));
         allPotentialPlays = allPotentialPlays.parallelStream().filter(x-> rule.followsRules(x.getPlayAsArray())).collect(Collectors.toList());
         end = allPotentialPlays.size();
@@ -135,10 +129,10 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
                 sum += a.join().getScore();
             }
             //get the sum
-            singlePlay.score = sum;
+            singlePlay.setScore(sum);
         }
         else{
-            singlePlay.score = 1;
+            singlePlay.setScore(1);
         }
     }
 

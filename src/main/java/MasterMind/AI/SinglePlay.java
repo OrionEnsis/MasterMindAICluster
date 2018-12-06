@@ -2,22 +2,20 @@ package MasterMind.AI;
 
 
 public class SinglePlay {
-    int bitGuess;
-    int score;
-    int pegs;
-    public SinglePlay(int guess,int pegs){
+    private int bitGuess;
+    private int score;
+    private int pegs;
+    SinglePlay(int guess,int pegs){
         bitGuess = guess;
         score = 0;
         this.pegs = pegs;
     }
 
-    //TODO write tests for this.  These should be correct.
-    public int getPegColor(int position){
-        return ((bitGuess >>>(3*position)) & 0x7);
+    public void setScore(int score) {
+        this.score = score;
     }
 
-
-    public int getScore() {
+    int getScore() {
         return score;
     }
 
