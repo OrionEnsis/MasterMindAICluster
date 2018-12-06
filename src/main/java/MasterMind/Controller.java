@@ -1,5 +1,6 @@
 package MasterMind;
 
+import MasterMind.AI.AI;
 import MasterMind.GUI.GUI;
 import MasterMind.GUI.PegResultsPanel;
 
@@ -7,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ForkJoinPool;
 
 public class Controller implements ActionListener {
     private Game game;
@@ -19,7 +21,7 @@ public class Controller implements ActionListener {
     }
 
     private void setupListeners() {
-        //gui.settingsPanel.newGameButton.addActionListener(this); //TODO change this to choose between player and AI
+        gui.settingsPanel.startButton.addActionListener(this);
         gui.gameBoardPanel.submitTurnButton.addActionListener(this);
         gui.gameBoardPanel.guesses.forEach(g->g.pegs.forEach(p->p.addActionListener(this)));
         gui.colorsPanel.colors.forEach(b->b.addActionListener(this));
@@ -45,13 +47,27 @@ public class Controller implements ActionListener {
         if(gui.gameBoardPanel.guesses.get(gui.gameBoardPanel.getCurrentGuess()).pegs.contains(b)){
             changePegColor(b);
         }
+
+        if(b.getText().equals("Start")){
+            startGame();
+        }
+    }
+
+    private void startGame() {
+        gui.settingsPanel.startButton.setEnabled(false);
+        if(gui.settingsPanel.getSelected() == 0){
+            gui.gameBoardPanel.submitTurnButton.setEnabled(true);
+        }else{
+            new Thread(this::runAI).start();
+
+        }
     }
 
 
-    private int[] playTurn(){
+    private void playTurn(){
         //check/verify valid submission
         int[] guess = getGuessFromPegs();
-        int[] results = null;
+        int[] results;
         boolean b = true;
         for (int gues : guess) {
             if (gues == -1) {
@@ -75,7 +91,7 @@ public class Controller implements ActionListener {
                     gui.gameBoardPanel.unlockNextRow();
                 }
                 else{
-                    System.out.println("Game OVer");
+                    System.out.println("Game Over");
                     gui.gameBoardPanel.revealAnswer(game.getAnswer());
 
                 }
@@ -90,7 +106,6 @@ public class Controller implements ActionListener {
         else{
             //TODO invalid error handling.
         }
-        return results;
     }
 
     private void updateResults(int[] results) {
@@ -123,9 +138,24 @@ public class Controller implements ActionListener {
     }
 
     //latch for AI to play
-    void submit(int[] guess){
+    private void submit(int[] guess){
         //ask game for result
         gui.gameBoardPanel.updateCurrentGuess(guess);
         playTurn();
+    }
+
+    private void runAI(){
+        AI ai;
+        ForkJoinPool pool = new ForkJoinPool();
+        int[] temp = {0,0,0,0,0};
+
+        System.out.println("AI has started");
+        submit(temp);
+
+        while(!game.checkLost() && !game.checkWin()){
+            ai = new AI(game);
+            submit(pool.invoke(ai).getPlayAsArray());
+            System.out.println("Turn Submitted");
+        }
     }
 }

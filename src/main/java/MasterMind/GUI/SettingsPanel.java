@@ -1,13 +1,16 @@
 package MasterMind.GUI;
 
+
 import javax.swing.*;
 import java.awt.*;
 
 public class SettingsPanel extends JPanel {
-    private JTextField pegField;
-    private JTextField guessField;
-    private JTextField colorsField;
-    private JButton newGameButton;
+    private ButtonGroup buttonGroup;
+    private JRadioButton playerButton;
+    private JRadioButton aiButton;
+
+    public JButton startButton;
+
     public static void main(String[] args){
         JFrame frame = new JFrame("Settings");
         frame.add( new SettingsPanel());
@@ -17,9 +20,10 @@ public class SettingsPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    private SettingsPanel(){
+     SettingsPanel(){
         super();
         setSize(250,100);
+        //setup the grid layout
         GridBagLayout bagLayout = new GridBagLayout();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -27,52 +31,39 @@ public class SettingsPanel extends JPanel {
         setBorder(BorderFactory.createEtchedBorder());
         setLayout(bagLayout);
 
-        JLabel pegLabel = new JLabel();
-        pegLabel.setText("Number of Pegs");
-        gridBagConstraints.gridx = 0;
+        buttonGroup = new ButtonGroup();
+
         gridBagConstraints.gridy = 0;
-        add(pegLabel,gridBagConstraints);
-
-        this.pegField = new JTextField();
         gridBagConstraints.gridx = 1;
-        add(pegField,gridBagConstraints);
 
-        JLabel guessLabel = new JLabel();
-        guessLabel.setText("Number of Guesses");
+        playerButton = new JRadioButton("Player");
+        add(playerButton,gridBagConstraints);
+        buttonGroup.add(playerButton);
+        playerButton.setSelected(true);
+
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 2;
+        aiButton = new JRadioButton("AI");
+        add(aiButton,gridBagConstraints);
+
+        buttonGroup.add(this.aiButton);
+
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        add(guessLabel,gridBagConstraints);
+        gridBagConstraints.ipadx = 2;
+        gridBagConstraints.gridwidth = 4;
+        startButton = new JButton("Start");
+        add(startButton,gridBagConstraints);
 
-        this.guessField = new JTextField();
-        gridBagConstraints.gridx = 1;
-        add(guessField,gridBagConstraints);
-
-        JLabel colorsLabel = new JLabel();
-        colorsLabel.setText("Number of Colors");
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        add(colorsLabel,gridBagConstraints);
-
-        this.colorsField = new JTextField();
-        gridBagConstraints.gridx = 1;
-        add(colorsField,gridBagConstraints);
-
-        this.newGameButton = new JButton();
-        newGameButton.setText("New Game!");
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
-        add(newGameButton,gridBagConstraints);
     }
 
-    public int getColors(){
-        return Integer.parseInt(colorsField.getText());
+    public int getSelected(){
+        if(playerButton.isSelected()){
+            return 0;
+        }
+        else{
+            return 1;
+        }
     }
-    public int getPegs(){
-        return Integer.parseInt(pegField.getText());
-    }
-    public int getGuesses(){
-        return Integer.parseInt(guessField.getText());
-    }
+
 }

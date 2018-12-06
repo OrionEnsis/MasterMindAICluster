@@ -57,6 +57,7 @@ public class GameBoardPanel extends JPanel {
         b.setEnabled(true);
         add(b);
         submitTurnButton = b;
+        submitTurnButton.setEnabled(false);
     }
 
     public SingleGuessPanel getCurrentTurn(){
