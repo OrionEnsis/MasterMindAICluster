@@ -32,7 +32,6 @@ public class SettingsPanel extends JPanel {
         setLayout(bagLayout);
 
         buttonGroup = new ButtonGroup();
-
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridx = 1;
 

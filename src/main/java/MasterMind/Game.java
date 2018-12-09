@@ -2,6 +2,15 @@ package MasterMind;
 
 import java.util.*;
 
+/**
+ * This Class represents a game of mastermind.  The game is played with a series of multi-colored pegs.  A possible code
+ * is selected as the answer.  A player must enter in a potential combination.  They are then given a series of white
+ * and black pegs.  White indicates a peg is in the wrong location.  The order does not matter for these results.
+ *
+ *
+ * It returns its guesses and results in the form of an int[].  0 represents
+ * not correct, 1 represents correct (white), 2 represents wrong location (black).
+ */
 public class Game {
     private int currentGuesses;
     private int guesses;
@@ -13,6 +22,13 @@ public class Game {
     public List<int[]> pastGuesses;
     public List<int[]> pastResults;
 
+    /**
+     * The constructor.
+     *
+     * @param guesses the number of guesses the player is permitted
+     * @param colors the number of different colors that can be played
+     * @param pegs the number of pegs in the code.
+     */
     Game(int guesses, int colors, int pegs){
         this.currentGuesses = 0;
         this.guesses = guesses;

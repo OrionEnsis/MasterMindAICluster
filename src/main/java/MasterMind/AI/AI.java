@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePlay> {
 
-    public List<SinglePlay> allPotentialPlays = new LinkedList<>();
+    private List<SinglePlay> allPotentialPlays = new LinkedList<>();
     private Game game;
     private static final int THRESHOLD = 5000;
     private int start;

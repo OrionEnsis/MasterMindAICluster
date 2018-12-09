@@ -10,10 +10,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ForkJoinPool;
 
+/**
+ * This class controls the interactions between the GUI, AI and Game classes.  It handles GUI events, starts the AI and
+ * holds a reference to the game to enable communications.
+ * @author Jim Spagnola
+ */
 public class Controller implements ActionListener {
     private Game game;
     private GUI gui;
 
+    /**
+     * The constructor.
+     *
+     * @param gui The user interface.
+     * @param game The game of MasterMind
+     */
     Controller(GUI gui, Game game){
         this.game = game;
         this.gui = gui;
@@ -27,6 +38,10 @@ public class Controller implements ActionListener {
         gui.colorsPanel.colors.forEach(b->b.addActionListener(this));
     }
 
+    /**
+     * @See ActionListener
+     * @param e The action event
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton)e.getSource();
@@ -41,7 +56,6 @@ public class Controller implements ActionListener {
             //change that to active color
             changeHighlightedColor(b);
         }
-
 
         //if peg was clicked
         if(gui.gameBoardPanel.guesses.get(gui.gameBoardPanel.getCurrentGuess()).pegs.contains(b)){
@@ -104,7 +118,7 @@ public class Controller implements ActionListener {
             }
         }
         else{
-            //TODO invalid error handling.
+            JOptionPane.showMessageDialog(null,"You have not finished your turn!!","Error!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
