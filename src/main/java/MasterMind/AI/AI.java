@@ -5,6 +5,11 @@ import java.util.*;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Collectors;
 
+/**
+ * This class is a recursive Task that will iterate over a collection of possibilities in MasterMind.  It looks all
+ * future possibilities and returns the move that will remove the most amount of elements possible.
+ * @author Jim Spagnola III
+ */
 public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePlay> {
 
     private List<SinglePlay> allPotentialPlays = new LinkedList<>();
@@ -15,6 +20,10 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     private int depth;
     private List<Rule> rules = new ArrayList<>(); //we don't need this, but keeping it around just in case we need it.
 
+    /**
+     * The constructor.  It will look at all previous turns to add rules that remove possibilities from the list.
+     * @param game the game of mastermind currently being played
+     */
     public AI(Game game){
         super();
         this.game = game;
@@ -66,7 +75,6 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     }
 
     private void removeInvalid(Rule rule) {
-        //allPotentialPlays.parallelStream().forEach(x-> rule.followsRules(x.getPlayAsArray()));
         allPotentialPlays = allPotentialPlays.parallelStream().filter(x-> rule.followsRules(x.getPlayAsArray())).collect(Collectors.toList());
         end = allPotentialPlays.size();
     }
@@ -97,8 +105,8 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
             if(allPotentialPlays.get(i) == null){
                 System.out.println(i);
             }
-            if(end > allPotentialPlays.size())
-                System.out.println("end is too big!");
+
+            //TODO for clustering this section should offload work.
             determineScore(allPotentialPlays.get(i));
 
             //compare to current leader...smaller one wins

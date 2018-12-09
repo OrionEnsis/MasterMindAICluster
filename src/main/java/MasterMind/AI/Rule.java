@@ -1,9 +1,14 @@
 package MasterMind.AI;
 
 
-
-//the incoming results use 0 to indicate number of non members, 1 to indicate must be present in location, and 2 for must
-// be present.  value that have not been evaluated will be marked with 4.
+/**
+ * This class represents a "Rule" all remaining answers must follow.  This is used for filtering out guesses that are
+ * not potentially winnable.
+ *
+ * the incoming results use 0 to indicate number of non members, 1 to indicate must be present in location, and 2 for must
+ * be present.  value that have not been evaluated will be marked with 4.
+ * @author Jim Spagnola
+ */
 class Rule {
     private int mustHave;
     private int mayHave;

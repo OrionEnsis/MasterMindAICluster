@@ -38,10 +38,6 @@ public class Controller implements ActionListener {
         gui.colorsPanel.colors.forEach(b->b.addActionListener(this));
     }
 
-    /**
-     * @See ActionListener
-     * @param e The action event
-     */
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton b = (JButton)e.getSource();
