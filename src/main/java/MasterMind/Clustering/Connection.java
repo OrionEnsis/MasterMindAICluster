@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
 public class Connection implements Runnable,Comparable<Connection> {
-    public static final PriorityBlockingQueue<Connection> queue = new PriorityBlockingQueue();
+    public static final PriorityBlockingQueue<Connection> queue = new PriorityBlockingQueue<>();
     public static final ConcurrentHashMap<String, Connection> workMap = new ConcurrentHashMap<>();
     private Socket socket;
     private ObjectOutputStream output;
@@ -29,7 +29,7 @@ public class Connection implements Runnable,Comparable<Connection> {
         output.flush();
         input = new ObjectInputStream(socket.getInputStream());
         System.out.println("Streams setup");
-        queue.add(this);
+        queue.offer(this);
     }
 
     @Override
@@ -43,18 +43,12 @@ public class Connection implements Runnable,Comparable<Connection> {
             initialInfo();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        }finally{
-            try {
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
     private void initialInfo() throws IOException, ClassNotFoundException {
         name = (String)input.readObject();
-        System.out.println("name recieved " + name);
+        System.out.println("name received " + name);
         cores = input.readInt();
         System.out.println("cores sent");
         System.out.println(name + " " + cores);
@@ -65,10 +59,13 @@ public class Connection implements Runnable,Comparable<Connection> {
 
     public void sendGame(Game game){
         try {
+            System.out.println("sending game Message");
             output.writeObject("GAME");
             output.flush();
+            System.out.println("sending Game");
             output.writeObject(game);
             output.flush();
+            System.out.println("Game Sent");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,14 +74,23 @@ public class Connection implements Runnable,Comparable<Connection> {
 
     public void sendPlay(SinglePlay play){
         try {
+            System.out.println("Sending play");
             output.writeObject("PLAY");
             output.flush();
             output.writeObject(play);
             output.flush();
-            play = (SinglePlay)input.readObject();
+            SinglePlay temp = (SinglePlay)input.readObject();
+            play.setScore(temp.getScore());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+    }
 
+    public void closeConnection(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

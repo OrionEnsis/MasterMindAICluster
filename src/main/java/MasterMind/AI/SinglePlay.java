@@ -18,11 +18,11 @@ public class SinglePlay implements Serializable {
         this.pegs = pegs;
     }
 
-    void setScore(int score) {
+    public void setScore(int score) {
         this.score = score;
     }
 
-    int getScore() {
+    public int getScore() {
         return score;
     }
 

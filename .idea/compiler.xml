@@ -2,8 +2,14 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="MasterMindAI.MasterMindAI.main" target="1.9" />
+      <module name="MasterMindAI.MasterMindAI.test" target="1.9" />
       <module name="MasterMindAI_main" target="1.9" />
       <module name="MasterMindAI_test" target="1.9" />
+      <module name="MasterMindAICluster.MasterMindAI.main" target="1.9" />
+      <module name="MasterMindAICluster.MasterMindAI.test" target="1.9" />
+      <module name="MasterMindAICluster.MasterMindAICluster.main" target="1.9" />
+      <module name="MasterMindAICluster.MasterMindAICluster.test" target="1.9" />
     </bytecodeTargetLevel>
   </component>
 </project>

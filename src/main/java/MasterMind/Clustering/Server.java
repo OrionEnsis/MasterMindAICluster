@@ -40,14 +40,10 @@ public class Server {
         server.close();
     }
 
-
-
     private void waitForConnection() throws IOException{
         System.out.println("Awaiting the connection.");
         connection = server.accept();
         System.out.println("Connection received from: " + connection.getInetAddress().getHostName());
     }
-
-
 
 }

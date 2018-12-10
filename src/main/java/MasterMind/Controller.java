@@ -1,6 +1,7 @@
 package MasterMind;
 
 import MasterMind.AI.AI;
+import MasterMind.Clustering.Connection;
 import MasterMind.GUI.GUI;
 import MasterMind.GUI.PegResultsPanel;
 
@@ -163,7 +164,8 @@ public class Controller implements ActionListener {
         submit(temp);
 
         while(!game.checkLost() && !game.checkWin()){
-            ai = new AI(game,false);
+            Connection.queue.forEach(x->x.sendGame(game));
+            ai = new AI(game,true);
             submit(pool.invoke(ai).getPlayAsArray());
             System.out.println("Turn Submitted");
         }

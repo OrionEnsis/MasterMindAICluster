@@ -151,7 +151,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         Connection connection = Connection.queue.poll();
         if(useNetwork && connection != null){
             connection.sendPlay(singlePlay);
-            Connection.queue.add(connection);
+            Connection.queue.offer(connection);
         }
         else{
             determineScore(singlePlay);
