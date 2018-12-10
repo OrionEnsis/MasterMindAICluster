@@ -1,5 +1,6 @@
 package MasterMind;
 
+import MasterMind.Clustering.Server;
 import MasterMind.GUI.GUI;
 import javax.swing.*;
 
@@ -14,5 +15,6 @@ public class Main {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Controller controller = new Controller(frame,game);
+        new Thread(()->new Server().start()).start();
     }
 }

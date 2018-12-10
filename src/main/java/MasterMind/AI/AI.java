@@ -1,5 +1,6 @@
 package MasterMind.AI;
 
+import MasterMind.Clustering.Connection;
 import MasterMind.Game;
 import java.util.*;
 import java.util.concurrent.RecursiveTask;
@@ -18,14 +19,16 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     private int start;
     private int end;
     private int depth;
+    private boolean useNetwork = true;
     private List<Rule> rules = new ArrayList<>(); //we don't need this, but keeping it around just in case we need it.
 
     /**
      * The constructor.  It will look at all previous turns to add rules that remove possibilities from the list.
      * @param game the game of mastermind currently being played
      */
-    public AI(Game game){
+    public AI(Game game, boolean useNetwork){
         super();
+        this.useNetwork = useNetwork;
         this.game = game;
         int totalRemainingPossibilities = (int)Math.pow((double) game.getColors(),(double) game.getPegs());
         start = 0;
@@ -53,16 +56,15 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         start = 0;
         end = list.size();
         depth = i;
+        useNetwork = false;
     }
 
     @Override
     protected SinglePlay compute() {
         SinglePlay result;
         if((end-start) < THRESHOLD) {
-            //System.out.println("Doing Work " + (end -start));
             result = doWork();
         }else {
-            //System.out.println("Splitting " + (end -start));
             result = split();
         }
         return result;
@@ -95,6 +97,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
             return ai2Result;
         }
     }
+
     private SinglePlay doWork() {
         SinglePlay currentWinner = new SinglePlay(-1,game.getPegs());
         int highScore = Integer.MAX_VALUE;
@@ -105,8 +108,8 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
                 System.out.println(i);
             }
 
-            //TODO for clustering this section should offload work.
-            determineScore(allPotentialPlays.get(i));
+            //off load work if we can.  If not, do it ourselves.
+            networkCheck(allPotentialPlays.get(i));
 
             //compare to current leader...smaller one wins
             if(highScore > allPotentialPlays.get(i).getScore()){
@@ -144,6 +147,16 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         }
     }
 
+    private void networkCheck(SinglePlay singlePlay){
+        Connection connection = Connection.queue.poll();
+        if(useNetwork && connection != null){
+            connection.sendPlay(singlePlay);
+            Connection.queue.add(connection);
+        }
+        else{
+            determineScore(singlePlay);
+        }
+    }
     @Override
     public int compare(SinglePlay o1, SinglePlay o2) {
         return Integer.compare(o1.getScore(),o2.getScore());

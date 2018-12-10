@@ -5,40 +5,42 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private Socket socket = null;
     private ServerSocket server = null;
     private Socket connection;
-    private ObjectOutputStream output;
-    private ObjectInputStream input;
 
     public void start(){
         try{
-            //TODO find my number for port
-            server = new ServerSocket(10000,100);
+            server = new ServerSocket(2693,100);
             while(true){
                 try{
                     waitForConnection();
-                    setupStreams();
-                    maintainConnection();
+                    setupCreateNewConnection();
                 }catch (EOFException e){
                     System.out.print("Server closed");
-                }
-                finally{
-                    //TODO close the server
-                    closeServer();
                 }
             }
         }catch(IOException e){
             e.printStackTrace();
         }
+        finally{
+            try {
+                closeServer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    private void setupStreams() throws IOException {
-        output = new ObjectOutputStream(connection.getOutputStream());
-        output.flush();
-        input = new ObjectInputStream(connection.getInputStream());
-        System.out.println("Streams setup");
+    private void setupCreateNewConnection() throws IOException {
+        new Thread(new Connection(connection)).start();
     }
+
+    private void closeServer()throws IOException {
+        connection.close();
+        server.close();
+    }
+
+
 
     private void waitForConnection() throws IOException{
         System.out.println("Awaiting the connection.");

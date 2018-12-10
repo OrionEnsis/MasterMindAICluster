@@ -163,7 +163,7 @@ public class Controller implements ActionListener {
         submit(temp);
 
         while(!game.checkLost() && !game.checkWin()){
-            ai = new AI(game);
+            ai = new AI(game,false);
             submit(pool.invoke(ai).getPlayAsArray());
             System.out.println("Turn Submitted");
         }
