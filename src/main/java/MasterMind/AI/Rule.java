@@ -1,6 +1,8 @@
 package MasterMind.AI;
 
 
+import java.io.Serializable;
+
 /**
  * This class represents a "Rule" all remaining answers must follow.  This is used for filtering out guesses that are
  * not potentially winnable.
@@ -9,7 +11,7 @@ package MasterMind.AI;
  * be present.  value that have not been evaluated will be marked with 4.
  * @author Jim Spagnola
  */
-class Rule {
+class Rule implements Serializable {
     private int mustHave;
     private int mayHave;
     private int[] guess;

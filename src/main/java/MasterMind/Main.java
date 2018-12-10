@@ -8,7 +8,7 @@ import javax.swing.*;
  */
 public class Main {
     public static void main(String[] args){
-        Game game = new Game(15,8,5);
+        Game game = new Game(15,8,4);
 
         GUI frame = new GUI(game);
         frame.setVisible(true);

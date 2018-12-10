@@ -1,12 +1,14 @@
 package MasterMind.AI;
 
+import java.io.Serializable;
+
 /**
  * this class represents a single play as an integer.  It turns each peg into 3 bits and shifts it into the correct position.
  * it also contains the score which is determined by an outside metric.
  *
  * @author Jim Spagnola
  */
-public class SinglePlay {
+public class SinglePlay implements Serializable {
     private int bitGuess;
     private int score;
     private int pegs;

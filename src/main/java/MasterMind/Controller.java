@@ -157,7 +157,7 @@ public class Controller implements ActionListener {
     private void runAI(){
         AI ai;
         ForkJoinPool pool = new ForkJoinPool();
-        int[] temp = {0,0,0,0,0};
+        int[] temp = new int[game.getPegs()];
 
         System.out.println("AI has started");
         submit(temp);

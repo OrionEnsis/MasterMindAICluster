@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MasterMindAI.iml" filepath="$PROJECT_DIR$/.idea/modules/MasterMindAI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/MasterMindAICluster.iml" filepath="$PROJECT_DIR$/.idea/MasterMindAICluster.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MasterMindAI_main.iml" filepath="$PROJECT_DIR$/.idea/modules/MasterMindAI_main.iml" group="MasterMindAI" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/MasterMindAI_test.iml" filepath="$PROJECT_DIR$/.idea/modules/MasterMindAI_test.iml" group="MasterMindAI" />
+    </modules>
+  </component>
+</project>

@@ -1,5 +1,6 @@
 package MasterMind;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -12,7 +13,7 @@ import java.util.*;
  * not correct, 1 represents correct (white), 2 represents wrong location (black).
  * @author Jim SPagnola
  */
-public class Game {
+public class Game implements Serializable {
     private int currentGuesses;
     private int guesses;
     private int colors;

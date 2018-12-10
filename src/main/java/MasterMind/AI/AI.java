@@ -34,7 +34,6 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         }
         for (int i = 0; i < game.pastResults.size(); i++) {
             addRule(new Rule(game.pastGuesses.get(i),game.pastResults.get(i)));
-
         }
         end = allPotentialPlays.size();
         depth = 1;
@@ -119,7 +118,8 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         return currentWinner;
     }
 
-    private void determineScore(SinglePlay singlePlay) {
+    //intellij thinks this should be private, but we're going to use this for network stuff in a bit.
+    public void determineScore(SinglePlay singlePlay) {
         if(depth != 0){
             int sum = 0;
 
