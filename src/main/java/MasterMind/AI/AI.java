@@ -3,7 +3,7 @@ package MasterMind.AI;
 import MasterMind.Clustering.Connection;
 import MasterMind.Game;
 import java.util.*;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePlay> {
 
     private List<SinglePlay> allPotentialPlays = new LinkedList<>();
+    public static Semaphore lock;
     private Game game;
     private static final int THRESHOLD = 5000;
     private int start;
     private int end;
     private int depth;
-    private boolean useNetwork = true;
+    private boolean useNetwork;
     private List<Rule> rules = new ArrayList<>(); //we don't need this, but keeping it around just in case we need it.
 
     /**
@@ -41,13 +42,19 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         end = allPotentialPlays.size();
         depth = 1;
     }
-
-    private AI(Game game, int start, int end, List<SinglePlay> list){
+    public AI(Game game,int start, int end, boolean useNetwork){
+        this(game,useNetwork);
+        this.start = start;
+        this.end = end;
+        depth = 0;
+    }
+    private AI(Game game, int start, int end, List<SinglePlay> list,boolean useNetwork){
         this.allPotentialPlays = list;
         this.start = start;
         this.end = end;
         this.game = game;
         depth = 1;
+        this.useNetwork = useNetwork;
     }
 
     private AI(Game game,List<SinglePlay> list, int i) {
@@ -62,11 +69,12 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     @Override
     protected SinglePlay compute() {
         SinglePlay result;
-        if((end-start) < THRESHOLD) {
+        if ((end - start) < THRESHOLD) {
             result = doWork();
-        }else {
+        } else {
             result = split();
         }
+
         return result;
     }
 
@@ -83,12 +91,49 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
     private SinglePlay split() {
         int split = end - start;
         split = split/2;
-        AI ai1 = new AI(game,start,start+split,allPotentialPlays);
-        AI ai2 = new AI(game,start+split,end,allPotentialPlays);
-        ai1.fork();
+        AI ai1;
+        AI ai2 = new AI(game,start+split,end,allPotentialPlays,useNetwork);
+        SinglePlay ai2Result;
+        SinglePlay ai1Result;
+        if(useNetwork){
+            int cores = Connection.queue.stream().mapToInt(Connection::getCores).sum();
+            cores += Runtime.getRuntime().availableProcessors();
+            int workPerCore = (end-start)/cores;
+            int coreSplit = start;
+            ExecutorService ex = Executors.newFixedThreadPool(Connection.queue.size());
+            ArrayList<SinglePlay> bestPlays = new ArrayList<>();
+            ArrayList<FutureTask<SinglePlay>> futureTasks = new ArrayList<>();
 
-        SinglePlay ai2Result = ai2.compute();
-        SinglePlay ai1Result = ai1.join();
+            for (int i = 0; i < Connection.queue.size(); i++) {
+                Connection c = Connection.queue.get(i);
+                int tempStart = coreSplit;
+                int endTemp = tempStart + workPerCore*c.getCores();
+                futureTasks.add(new FutureTask<>(() -> c.sendPlays(tempStart, endTemp)));
+                coreSplit = endTemp;
+            }
+
+            for (FutureTask<SinglePlay> ft : futureTasks) {
+                ex.execute(ft);
+            }
+
+            ai1 = new AI(game,coreSplit,end,allPotentialPlays,useNetwork);
+            ai1Result = ai1.compute();
+
+            for (FutureTask<SinglePlay> bestPlay : futureTasks) {
+                try {
+                    bestPlays.add(bestPlay.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            ai2Result = bestPlays.stream().min(Comparator.comparingInt(SinglePlay::getScore)).get();
+        }else {
+            ai1 = new AI(game, start, start + split, allPotentialPlays, useNetwork);
+            ai1.fork();
+            ai2Result = ai2.compute();
+            ai1Result = ai1.join();
+        }
 
         if(ai1Result.getScore() > ai2Result.getScore()){
             return ai1Result;
@@ -109,7 +154,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
             }
 
             //off load work if we can.  If not, do it ourselves.
-            networkCheck(allPotentialPlays.get(i));
+            determineScore(allPotentialPlays.get(i));
 
             //compare to current leader...smaller one wins
             if(highScore > allPotentialPlays.get(i).getScore()){
@@ -147,16 +192,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         }
     }
 
-    private void networkCheck(SinglePlay singlePlay){
-        Connection connection = Connection.queue.poll();
-        if(useNetwork && connection != null){
-            connection.sendPlay(singlePlay);
-            Connection.queue.offer(connection);
-        }
-        else{
-            determineScore(singlePlay);
-        }
-    }
+
     @Override
     public int compare(SinglePlay o1, SinglePlay o2) {
         return Integer.compare(o1.getScore(),o2.getScore());

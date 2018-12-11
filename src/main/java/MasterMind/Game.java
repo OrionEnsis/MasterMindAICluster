@@ -11,7 +11,7 @@ import java.util.*;
  *
  * It returns its guesses and results in the form of an int[].  0 represents
  * not correct, 1 represents correct (white), 2 represents wrong location (black).
- * @author Jim SPagnola
+ * @author Jim Spagnola
  */
 public class Game implements Serializable {
     private int currentGuesses;

@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Semaphore;
 
 /**
  * This class controls the interactions between the GUI, AI and Game classes.  It handles GUI events, starts the AI and
@@ -157,6 +158,7 @@ public class Controller implements ActionListener {
 
     private void runAI(){
         AI ai;
+        AI.lock = new Semaphore(Connection.queue.size());
         ForkJoinPool pool = new ForkJoinPool();
         int[] temp = new int[game.getPegs()];
 

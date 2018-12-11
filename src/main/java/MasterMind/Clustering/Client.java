@@ -10,22 +10,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.concurrent.ForkJoinPool;
 
 public class Client {
     private ObjectOutputStream output;
     private ObjectInputStream input;
+    private ForkJoinPool pool = new ForkJoinPool();
     private Socket socket;
     private Game game;
     private AI ai;
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter Name: ");
-        String temp = scanner.next();
-        Client client = new Client(temp);
-        client.sendPrimaryInfo();
-        client.handleInformation();
-    }
 
     public Client(String name){
         try {
@@ -39,14 +32,15 @@ public class Client {
         }
 
     }
-    private void handleInformation(){
+    public void handleInformation(){
         while(true){
             try {
+                System.out.println("waiting for work");
                 String temp = (String)input.readObject();
                 if(temp.equalsIgnoreCase("GAME")){
                     getNewGame();
                 }else if(temp.equalsIgnoreCase("PLAY")){
-                    calculatePlay();
+                    calculate();
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -67,31 +61,48 @@ public class Client {
         ai.determineScore(play);
         System.out.println("sending Play");
         output.writeObject(play);
-        System.out.println("play sent");
+        System.out.println("play sent" + play);
         output.flush();
     }
 
     private void getNewGame() throws IOException, ClassNotFoundException {
         game = (Game)input.readObject();
         System.out.println("Received Game");
-        ai = new AI(game,false);
+        //ai = new AI(game,false);
     }
 
-    private void sendPrimaryInfo(){
+    public void sendPrimaryInfo(){
         try {
             output.writeObject(InetAddress.getLocalHost().getHostName());
-            System.out.println("sent hostName");
+            //System.out.println("sent hostName");
             output.flush();
             output.writeInt(Runtime.getRuntime().availableProcessors());
             output.flush();
-            System.out.println("sent cores");
+            //System.out.println("sent cores");
             String temp = (String)input.readObject();
-            System.out.println("received response");
-            System.out.println(temp);
+            //System.out.println("received response");
+            //System.out.println(temp);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    public void calculate(){
+        try {
+            System.out.println("Starting game calculation");
+            int start = input.readInt();
+            int end = input.readInt();
+            ai = new AI(game,start,end,false);
+            SinglePlay play = pool.invoke(ai);
+            System.out.println("play calculated");
+            output.writeObject(play);
+            System.out.println("play sent" + play);
+            output.flush();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
 }

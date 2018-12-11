@@ -6,10 +6,14 @@
       <module name="MasterMindAI.MasterMindAI.test" target="1.9" />
       <module name="MasterMindAI_main" target="1.9" />
       <module name="MasterMindAI_test" target="1.9" />
+      <module name="MasterMindAICluster.client.main" target="1.9" />
+      <module name="MasterMindAICluster.client.test" target="1.9" />
       <module name="MasterMindAICluster.MasterMindAI.main" target="1.9" />
       <module name="MasterMindAICluster.MasterMindAI.test" target="1.9" />
       <module name="MasterMindAICluster.MasterMindAICluster.main" target="1.9" />
       <module name="MasterMindAICluster.MasterMindAICluster.test" target="1.9" />
+      <module name="MasterMindAICluster.server.main" target="1.9" />
+      <module name="MasterMindAICluster.server.test" target="1.9" />
     </bytecodeTargetLevel>
   </component>
 </project>
