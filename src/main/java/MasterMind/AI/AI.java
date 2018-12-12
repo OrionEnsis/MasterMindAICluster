@@ -13,10 +13,11 @@ import java.util.stream.Collectors;
  */
 public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePlay> {
 
-    private List<SinglePlay> allPotentialPlays = new LinkedList<>();
-    public static Semaphore lock;
+    public List<SinglePlay> allPotentialPlays = new LinkedList<>();
+    private static int count = 1;
     private Game game;
     private static final int THRESHOLD = 5000;
+    private static final Semaphore lock = new Semaphore(1);
     private int start;
     private int end;
     private int depth;
@@ -29,6 +30,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
      */
     public AI(Game game, boolean useNetwork){
         super();
+        count = 0;
         this.useNetwork = useNetwork;
         this.game = game;
         int totalRemainingPossibilities = (int)Math.pow((double) game.getColors(),(double) game.getPegs());
@@ -46,15 +48,16 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         this(game,useNetwork);
         this.start = start;
         this.end = end;
-        depth = 0;
+        depth = 1;
     }
-    private AI(Game game, int start, int end, List<SinglePlay> list,boolean useNetwork){
+    private AI(Game game, int start, int end,int depth, List<SinglePlay> list,boolean useNetwork){
         this.allPotentialPlays = list;
         this.start = start;
         this.end = end;
         this.game = game;
-        depth = 1;
+        this.depth = depth;
         this.useNetwork = useNetwork;
+
     }
 
     private AI(Game game,List<SinglePlay> list, int i) {
@@ -72,6 +75,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         if ((end - start) < THRESHOLD) {
             result = doWork();
         } else {
+            //System.out.println("Split");
             result = split();
         }
 
@@ -92,33 +96,46 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         int split = end - start;
         split = split/2;
         AI ai1;
-        AI ai2 = new AI(game,start+split,end,allPotentialPlays,useNetwork);
+        AI ai2 = new AI(game,start+split,end,depth,allPotentialPlays,useNetwork);
         SinglePlay ai2Result;
         SinglePlay ai1Result;
-        if(useNetwork){
+
+        //we want to perform a different sort of split for load balancing if the network is involved.
+        if(useNetwork && lock.tryAcquire()){
+            System.out.println("Network split");
             int cores = Connection.queue.stream().mapToInt(Connection::getCores).sum();
             cores += Runtime.getRuntime().availableProcessors();
             int workPerCore = (end-start)/cores;
             int coreSplit = start;
-            ExecutorService ex = Executors.newFixedThreadPool(Connection.queue.size());
+
+            //we need a way to run, store the FutureTasks and their results
+            ExecutorService ex = null;
+            if( Connection.queue.size() >0)
+                 ex = Executors.newFixedThreadPool(Connection.queue.size());
             ArrayList<SinglePlay> bestPlays = new ArrayList<>();
             ArrayList<FutureTask<SinglePlay>> futureTasks = new ArrayList<>();
 
+            //distribute work between all cores.
             for (int i = 0; i < Connection.queue.size(); i++) {
                 Connection c = Connection.queue.get(i);
                 int tempStart = coreSplit;
                 int endTemp = tempStart + workPerCore*c.getCores();
                 futureTasks.add(new FutureTask<>(() -> c.sendPlays(tempStart, endTemp)));
                 coreSplit = endTemp;
+                System.out.println(c.getName() + " has " + (endTemp-tempStart) + " tasks.");
             }
 
-            for (FutureTask<SinglePlay> ft : futureTasks) {
-                ex.execute(ft);
-            }
+            //run the futures
+            if( ex != null)
+                for (FutureTask<SinglePlay> ft : futureTasks) {
+                    ex.execute(ft);
+                }
 
-            ai1 = new AI(game,coreSplit,end,allPotentialPlays,useNetwork);
+            //run ours.  PS we want to do the most proportional work on the server machine because there is less info to send
+            ai1 = new AI(game,coreSplit,end,depth,allPotentialPlays,useNetwork);
             ai1Result = ai1.compute();
 
+            //collect the futures
             for (FutureTask<SinglePlay> bestPlay : futureTasks) {
                 try {
                     bestPlays.add(bestPlay.get());
@@ -127,14 +144,28 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
                 }
             }
 
-            ai2Result = bestPlays.stream().min(Comparator.comparingInt(SinglePlay::getScore)).get();
-        }else {
-            ai1 = new AI(game, start, start + split, allPotentialPlays, useNetwork);
+            //get the smallest of the two
+            SinglePlay play = new SinglePlay(0, allPotentialPlays.get(0).getPegs());
+            play.setScore(-1);
+            for (int i = 0; i < bestPlays.size(); i++) {
+                if(play.getScore() == -1 || play.getScore() > bestPlays.get(i).getScore()){
+                    play = bestPlays.get(i);
+                }
+            }
+            ai2Result = play;
+            System.out.println("Network out");
+            lock.release();
+        }
+        //if we aren't using a network we want to keep things local splitting and joining.
+        else {
+            //System.out.println("Normal Split");
+            ai1 = new AI(game, start, start + split, depth, allPotentialPlays, useNetwork);
             ai1.fork();
             ai2Result = ai2.compute();
             ai1Result = ai1.join();
         }
 
+        //regardless we still want the smallest possible set of answers
         if(ai1Result.getScore() > ai2Result.getScore()){
             return ai1Result;
         }
@@ -152,7 +183,10 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
             if(allPotentialPlays.get(i) == null){
                 System.out.println(i);
             }
-
+            if(depth ==1){
+                System.out.println(count + "/" + allPotentialPlays.size());
+                count++;
+            }
             //off load work if we can.  If not, do it ourselves.
             determineScore(allPotentialPlays.get(i));
 
@@ -166,8 +200,7 @@ public class AI extends RecursiveTask<SinglePlay> implements Comparator<SinglePl
         return currentWinner;
     }
 
-    //intellij thinks this should be private, but we're going to use this for network stuff in a bit.
-    public void determineScore(SinglePlay singlePlay) {
+    private void determineScore(SinglePlay singlePlay) {
         if(depth != 0){
             int sum = 0;
 

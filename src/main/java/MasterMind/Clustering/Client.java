@@ -18,7 +18,6 @@ public class Client {
     private ForkJoinPool pool = new ForkJoinPool();
     private Socket socket;
     private Game game;
-    private AI ai;
 
     public Client(String name){
         try {
@@ -54,45 +53,32 @@ public class Client {
         }
     }
 
-    private void calculatePlay() throws IOException, ClassNotFoundException {
-        System.out.println("Awaiting Play");
-        SinglePlay play = (SinglePlay)input.readObject();
-        System.out.println("calculating play");
-        ai.determineScore(play);
-        System.out.println("sending Play");
-        output.writeObject(play);
-        System.out.println("play sent" + play);
-        output.flush();
-    }
-
     private void getNewGame() throws IOException, ClassNotFoundException {
         game = (Game)input.readObject();
+        System.out.println("current guesses " + game.pastGuesses.size());
         System.out.println("Received Game");
-        //ai = new AI(game,false);
     }
 
     public void sendPrimaryInfo(){
         try {
             output.writeObject(InetAddress.getLocalHost().getHostName());
-            //System.out.println("sent hostName");
             output.flush();
             output.writeInt(Runtime.getRuntime().availableProcessors());
             output.flush();
-            //System.out.println("sent cores");
             String temp = (String)input.readObject();
-            //System.out.println("received response");
-            //System.out.println(temp);
+            System.out.println("Response: " + temp);
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    public void calculate(){
+    private void calculate(){
         try {
             System.out.println("Starting game calculation");
             int start = input.readInt();
             int end = input.readInt();
-            ai = new AI(game,start,end,false);
+            AI ai = new AI(game, start, end, false);
+            System.out.println("Size " + ai.allPotentialPlays.size());
             SinglePlay play = pool.invoke(ai);
             System.out.println("play calculated");
             output.writeObject(play);
@@ -102,7 +88,5 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }

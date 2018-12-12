@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Semaphore;
 
 /**
  * This class controls the interactions between the GUI, AI and Game classes.  It handles GUI events, starts the AI and
@@ -69,9 +68,10 @@ public class Controller implements ActionListener {
         gui.settingsPanel.startButton.setEnabled(false);
         if(gui.settingsPanel.getSelected() == 0){
             gui.gameBoardPanel.submitTurnButton.setEnabled(true);
-        }else{
+        }else if(gui.settingsPanel.getSelected() == 1){
             new Thread(this::runAI).start();
-
+        } else{
+            new Thread(this::runAICluster).start();
         }
     }
 
@@ -158,11 +158,25 @@ public class Controller implements ActionListener {
 
     private void runAI(){
         AI ai;
-        AI.lock = new Semaphore(Connection.queue.size());
         ForkJoinPool pool = new ForkJoinPool();
         int[] temp = new int[game.getPegs()];
 
         System.out.println("AI has started");
+        submit(temp);
+
+        while(!game.checkLost() && !game.checkWin()){
+            ai = new AI(game,false);
+            submit(pool.invoke(ai).getPlayAsArray());
+            System.out.println("Turn Submitted");
+        }
+    }
+
+    private void runAICluster(){
+        AI ai;
+        ForkJoinPool pool = new ForkJoinPool();
+        int[] temp = new int[game.getPegs()];
+
+        System.out.println("AI Network has started");
         submit(temp);
 
         while(!game.checkLost() && !game.checkWin()){

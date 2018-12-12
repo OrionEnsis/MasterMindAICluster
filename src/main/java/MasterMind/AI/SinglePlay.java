@@ -1,7 +1,6 @@
 package MasterMind.AI;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 /**
  * this class represents a single play as an integer.  It turns each peg into 3 bits and shifts it into the correct position.
@@ -44,4 +43,7 @@ public class SinglePlay implements Serializable, Comparable<SinglePlay> {
         return Integer.compare(bitGuess,o.bitGuess);
     }
 
+    public int getPegs() {
+        return pegs;
+    }
 }

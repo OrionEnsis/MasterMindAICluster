@@ -8,6 +8,7 @@ public class SettingsPanel extends JPanel {
     private ButtonGroup buttonGroup;
     private JRadioButton playerButton;
     private JRadioButton aiButton;
+    private JRadioButton aiClusterButton;
 
     public JButton startButton;
 
@@ -44,8 +45,13 @@ public class SettingsPanel extends JPanel {
         gridBagConstraints.gridx = 2;
         aiButton = new JRadioButton("AI");
         add(aiButton,gridBagConstraints);
-
         buttonGroup.add(this.aiButton);
+
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 3;
+        aiClusterButton = new JRadioButton("AI Network");
+        add(aiClusterButton,gridBagConstraints);
+        buttonGroup.add(this.aiClusterButton);
 
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridx = 0;
@@ -59,10 +65,12 @@ public class SettingsPanel extends JPanel {
     public int getSelected(){
         if(playerButton.isSelected()){
             return 0;
-        }
-        else{
+        } else if (aiButton.isSelected()){
             return 1;
+        }else if(aiClusterButton.isSelected()){
+            return 2;
         }
+        return -1;
     }
 
 }

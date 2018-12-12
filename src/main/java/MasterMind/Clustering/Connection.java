@@ -8,21 +8,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 public class Connection implements Runnable,Comparable<Connection> {
     public static final ArrayList<Connection> queue = new ArrayList<>();
-    private static Semaphore semaphore = new Semaphore(1);
+    private static final Semaphore semaphore = new Semaphore(1);
     private Socket socket;
     private ObjectOutputStream output;
-    String name;
-    int cores;
+    private String name;
+    private int cores;
     private ObjectInputStream input;
 
-    public Connection(Socket socket) throws IOException{
+    Connection(Socket socket) throws IOException{
         this.socket = socket;
         setupStreams();
     }
@@ -76,23 +73,10 @@ public class Connection implements Runnable,Comparable<Connection> {
             System.out.println("sending Game");
             output.writeObject(game);
             output.flush();
+            System.out.println("game turns " + game.pastGuesses.size());
             System.out.println("Game Sent");
 
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendPlay(SinglePlay play){
-        try {
-            System.out.println("Sending play");
-            output.writeObject("PLAY");
-            output.flush();
-            output.writeObject(play);
-            output.flush();
-            SinglePlay temp = (SinglePlay)input.readObject();
-            play.setScore(temp.getScore());
-        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -126,5 +110,9 @@ public class Connection implements Runnable,Comparable<Connection> {
 
     public int getCores() {
         return cores;
+    }
+
+    public String getName() {
+        return name;
     }
 }
