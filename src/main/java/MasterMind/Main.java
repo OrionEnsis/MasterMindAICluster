@@ -31,7 +31,7 @@ public class Main {
             frame.setVisible(true);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> Connection.queue.forEach(Connection::closeConnection)));
-            Controller controller = new Controller(frame, game);
+            new Controller(frame, game);
             new Thread(() -> new Server().start()).start();
         }
     }

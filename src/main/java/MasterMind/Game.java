@@ -41,6 +41,9 @@ public class Game implements Serializable {
         generateAnswer();
     }
 
+    /**
+     * this method creates an answer to play the game.
+     */
     private void generateAnswer(){
         answer = new int[pegs];
         Random random = new Random();
@@ -49,6 +52,11 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * this method will take a given guess and return the results.
+     * @param guess
+     * @return the results as an int[].  with 1 representing correct answers, 2 representing nearly correct answers.
+     */
     int[] guess(int[] guess){
         int[] result = new int[guess.length];
         //correct answers
@@ -58,6 +66,7 @@ public class Game implements Serializable {
             }
         }
 
+        //check for close answers
         for (int i = 0; i < answer.length; i++) {
             if(result[i] != 1){
                 for (int j = 0; j < answer.length; j++) {
@@ -69,7 +78,7 @@ public class Game implements Serializable {
             }
         }
 
-
+        //sort what we've got
         Arrays.sort(result);
         for(int i = 0; i < result.length / 2; i++)
         {
@@ -78,6 +87,7 @@ public class Game implements Serializable {
             result[result.length - i - 1] = temp;
         }
 
+        //check for a win
         boolean b = true;
         for (int aResult : result) {
             if (aResult != 1) {
@@ -86,9 +96,13 @@ public class Game implements Serializable {
             }
         }
         hasWon = b;
+
+        //check for a loss
         currentGuesses++;
         if(guesses == currentGuesses)
             hasLost = true;
+
+        //update the data
         pastGuesses.add(guess);
         pastResults.add(result);
         return result;
@@ -99,11 +113,11 @@ public class Game implements Serializable {
     }
 
     boolean checkWin() {
-        return hasWon;
+        return !hasWon;
     }
 
     boolean checkLost() {
-        return hasLost;
+        return !hasLost;
     }
 
     public int getColors() {

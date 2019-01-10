@@ -12,17 +12,32 @@ public class SinglePlay implements Serializable, Comparable<SinglePlay> {
     private int bitGuess;
     private int score;
     private int pegs;
+
+    /**
+     * the default constructor.
+     *
+     * @param guess the incoming guess
+     * @param pegs the size of the guess
+     */
     SinglePlay(int guess,int pegs){
         bitGuess = guess;
         score = 0;
         this.pegs = pegs;
     }
 
-    public void setScore(int score) {
+    /**
+     * sets the score that is evaluated outside.
+     * @param score the score of the play
+     */
+    void setScore(int score) {
         this.score = score;
     }
 
-    public int getScore() {
+    /**
+     * retrieves the score
+     * @return the score
+     */
+    int getScore() {
         return score;
     }
 
@@ -43,7 +58,11 @@ public class SinglePlay implements Serializable, Comparable<SinglePlay> {
         return Integer.compare(bitGuess,o.bitGuess);
     }
 
-    public int getPegs() {
+    /**
+     * gets the number of pegs
+     * @return the number of pegs
+     */
+    int getPegs() {
         return pegs;
     }
 }

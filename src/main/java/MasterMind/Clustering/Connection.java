@@ -10,6 +10,10 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.Semaphore;
 
+/**
+ * this class represents a connection with a client.  it stores its individual socket, the name of the client and the
+ * number of available cores.
+ */
 public class Connection implements Runnable,Comparable<Connection> {
     public static final ArrayList<Connection> queue = new ArrayList<>();
     private static final Semaphore semaphore = new Semaphore(1);
@@ -19,11 +23,20 @@ public class Connection implements Runnable,Comparable<Connection> {
     private int cores;
     private ObjectInputStream input;
 
+    /**
+     * the default constructor
+     * @param socket the socket established by the server.
+     * @throws IOException
+     */
     Connection(Socket socket) throws IOException{
         this.socket = socket;
         setupStreams();
     }
 
+    /**
+     * this method sets up the input/output streams for a given connection.
+     * @throws IOException
+     */
     private void setupStreams() throws IOException {
         output = new ObjectOutputStream(socket.getOutputStream());
         output.flush();
@@ -54,6 +67,11 @@ public class Connection implements Runnable,Comparable<Connection> {
         }
     }
 
+    /**
+     * upon establishing a connection the client will send default info through the connection such as the name and cores.
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private void initialInfo() throws IOException, ClassNotFoundException {
         name = (String)input.readObject();
         System.out.println("name received " + name);
@@ -65,6 +83,10 @@ public class Connection implements Runnable,Comparable<Connection> {
         System.out.println("response sent");
     }
 
+    /**
+     * sends the current instance of the game to client.
+     * @param game the current instance of the game
+     */
     public void sendGame(Game game){
         try {
             System.out.println("sending game Message to " + name);
@@ -81,6 +103,9 @@ public class Connection implements Runnable,Comparable<Connection> {
         }
     }
 
+    /**
+     * closes an established connection.  Do not call if the connection has already been established.
+     */
     public void closeConnection(){
         try {
             socket.close();
@@ -89,6 +114,12 @@ public class Connection implements Runnable,Comparable<Connection> {
         }
     }
 
+    /**
+     * this method determines the optimal play given a range of indexes.
+     * @param start the index to start calculating scores
+     * @param end the end index for calculating scores
+     * @return the optimal play
+     */
     public SinglePlay sendPlays(int start, int end) {
         try {
             System.out.println("prepping play to " + name);

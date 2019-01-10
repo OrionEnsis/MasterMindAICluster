@@ -1,6 +1,5 @@
 package MasterMind.AI;
 
-
 import java.io.Serializable;
 
 /**
@@ -16,11 +15,24 @@ class Rule implements Serializable {
     private int mayHave;
     private int[] guess;
 
+    /**
+     * the default constructor.  its must and may have been preparsed.
+     *
+     * @param guess the specific guess
+     * @param must how many are correct
+     * @param may how many colors are correct
+     */
     Rule(int[] guess, int must, int may){
         this.mustHave = must;
         this.mayHave = may;
         this.guess = guess;
     }
+
+    /**
+     * a constructor that parses the results
+     * @param guess the specific guess
+     * @param results unparsed results
+     */
     Rule(int[] guess, int[] results){
         this.guess = guess;
         for (int result : results) {
@@ -29,11 +41,15 @@ class Rule implements Serializable {
             } else {
                 mayHave++;
             }
-
         }
-
     }
 
+    /**
+     * A method that examines if a given guess is valid.
+     *
+     * @param compareGuess the incoming guess
+     * @return whether or not the result is valid
+     */
     boolean followsRules(int[] compareGuess){
         int match = 0;
         int shift = 0;
