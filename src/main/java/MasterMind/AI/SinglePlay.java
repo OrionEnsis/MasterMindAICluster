@@ -37,7 +37,7 @@ public class SinglePlay implements Serializable, Comparable<SinglePlay> {
      * retrieves the score
      * @return the score
      */
-    int getScore() {
+    public int getScore() {
         return score;
     }
 

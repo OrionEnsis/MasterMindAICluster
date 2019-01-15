@@ -36,6 +36,11 @@ public class SingleGuessPanel extends JPanel{
         results = p;
         add(p);
     }
+
+    void reset(){
+        results.reset();
+        pegs.forEach((x)->x.setBackground(Color.WHITE));
+    }
     void setPegs(int[] guess){
         for (int i = 0; i < guess.length; i++) {
             pegs.get(i).setBackground(GUI.COLORS[guess[i]]);

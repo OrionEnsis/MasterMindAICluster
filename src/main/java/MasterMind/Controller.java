@@ -8,6 +8,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -16,6 +19,7 @@ import java.util.concurrent.ForkJoinPool;
  * @author Jim Spagnola
  */
 public class Controller implements ActionListener {
+    private final int BENCHMARKTESTS = 10000;
     private Game game;
     private GUI gui;
     private long startTime;
@@ -40,6 +44,7 @@ public class Controller implements ActionListener {
         gui.gameBoardPanel.submitTurnButton.addActionListener(this);
         gui.gameBoardPanel.guesses.forEach(g->g.pegs.forEach(p->p.addActionListener(this)));
         gui.colorsPanel.colors.forEach(b->b.addActionListener(this));
+        gui.settingsPanel.resetButton.addActionListener(this);
     }
 
     @Override
@@ -66,8 +71,18 @@ public class Controller implements ActionListener {
         if(b.getText().equals("Start")){
             startGame();
         }
+
+        //if start was clicked
+        if(b.getText().equals("Reset")){
+            reset();
+        }
+
     }
 
+    private void reset(){
+        gui.reset();
+        game.reset();
+    }
     /**
      * this method starts recording the time and starting the game for which ever mode it is in.
      */
@@ -84,13 +99,58 @@ public class Controller implements ActionListener {
             new Thread(this::runAI).start();
         }
         //AI cluster mode
-        else{
+        else if(gui.settingsPanel.getSelected() == 2){
             new Thread(this::runAICluster).start();
+        }
+        //benchmark cluster AI
+        else if(gui.settingsPanel.getSelected() == 3){
+            new Thread(this::benchmark).start();
         }
     }
 
+    private void benchmark(){
+        FileWriter fw;
+        try {
+            fw = new FileWriter("benchmark.csv");
+            fw.append("Test ID");
+            fw.append(',');
+            fw.append("Guesses");
+            fw.append(',');
+            fw.append("Time");
+            fw.append(',');
+            fw.append('\n');
+            reset();
+
+            for (int i = 1; i <= BENCHMARKTESTS; i++) {
+                startTime = System.nanoTime();
+                runAICluster();
+                fw.write(i+"");
+                fw.append(',');
+                fw.write(game.pastGuesses.size()+"");
+                fw.append(',');
+                fw.write(endGame()+"");
+                fw.append(',');
+                fw.append('\n');
+                reset();
+                System.out.println("Current Thread Count: " + ManagementFactory.getThreadMXBean().getThreadCount());
+            }
+
+            fw.flush();
+            fw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            runAICluster();
+
+        }
+        finally{
+            System.out.println("Benchmark Done");
+        }
+
+    }
+
     /**
-     * this method filters checks that all infomation on a submitted turn is accurate.  if it is, it will submit it to the
+     * this method filters checks that all information on a submitted turn is accurate.  if it is, it will submit it to the
      * game.  If it is not, it will display an error message instead.  Additionally, if a unique state is reached, IE, game is
      * won or lost, this method will inform the view of the change.
      */
@@ -142,9 +202,11 @@ public class Controller implements ActionListener {
     /**
      * this method ends the timer and displays the result in seconds
      */
-    private void endGame() {
+    private double endGame() {
         long endTime = System.nanoTime();
-        System.out.println("Final Time: " + (double)(endTime -startTime)/1000000000);
+        double time = endTime -startTime/1000000000.0;
+        System.out.println("Final Time: " + time);
+        return time;
     }
 
     /**
@@ -214,6 +276,7 @@ public class Controller implements ActionListener {
             submit(pool.invoke(ai).getPlayAsArray());
             System.out.println("Turn Submitted");
         }
+        System.out.println("AI done");
     }
 
     /**
@@ -230,5 +293,6 @@ public class Controller implements ActionListener {
             submit(pool.invoke(ai).getPlayAsArray());
             System.out.println("Turn Submitted");
         }
+        System.out.println("AI done");
     }
 }

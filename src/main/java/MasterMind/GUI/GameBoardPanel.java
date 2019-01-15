@@ -60,6 +60,21 @@ public class GameBoardPanel extends JPanel {
         submitTurnButton.setEnabled(false);
     }
 
+    void reset(){
+        guesses.forEach(x-> {
+            x.reset();
+            x.pegs.forEach(b->{
+                b.setEnabled(false);
+                b.setBackground(Color.GRAY);
+            });
+        });
+        currentGuess = 0;
+        guesses.get(currentGuess).pegs.forEach(b->{
+            b.setEnabled(true);
+            b.setBackground(Color.WHITE);
+        });
+        answerPanel.reset();
+    }
     public SingleGuessPanel getCurrentTurn(){
         return guesses.get(currentGuess);
     }

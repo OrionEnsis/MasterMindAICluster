@@ -17,7 +17,7 @@ public class AI extends RecursiveTask<SinglePlay> {
 
     private List<SinglePlay> allPotentialPlays = new LinkedList<>();
     private Game game;
-    private static final int THRESHOLD = 5000;
+    private static final int THRESHOLD = 1000;
     private static final Semaphore lock = new Semaphore(1);
     private int start;
     private int end;
@@ -135,7 +135,7 @@ public class AI extends RecursiveTask<SinglePlay> {
         SinglePlay ai1Result;
 
         //we want to perform a different sort of split for load balancing if the network is involved.
-        if(useNetwork && lock.tryAcquire()){
+        if(useNetwork && lock.tryAcquire() && (end - start) > Runtime.getRuntime().availableProcessors()){
             System.out.println("Network split");
             int cores = Connection.queue.stream().mapToInt(Connection::getCores).sum();
             cores += Runtime.getRuntime().availableProcessors();
@@ -180,9 +180,9 @@ public class AI extends RecursiveTask<SinglePlay> {
 
             //get the smallest of the two
             SinglePlay play = new SinglePlay(0, allPotentialPlays.get(0).getPegs());
-            play.setScore(-1);
+            play.setScore(Integer.MAX_VALUE);
             for (SinglePlay bestPlay : bestPlays) {
-                if (play.getScore() == -1 || play.getScore() > bestPlay.getScore()) {
+                if (play.getScore() == Integer.MAX_VALUE || play.getScore() < bestPlay.getScore()) {
                     play = bestPlay;
                 }
             }
@@ -199,7 +199,7 @@ public class AI extends RecursiveTask<SinglePlay> {
         }
 
         //regardless we still want the smallest possible set of answers
-        if(ai1Result.getScore() > ai2Result.getScore()){
+        if(ai1Result.getScore() < ai2Result.getScore()){
             return ai1Result;
         }else{
             return ai2Result;
@@ -212,6 +212,7 @@ public class AI extends RecursiveTask<SinglePlay> {
      */
     private SinglePlay doWork() {
         SinglePlay currentWinner = new SinglePlay(-1,game.getPegs());
+        currentWinner.setScore(Integer.MAX_VALUE);
         int highScore = Integer.MAX_VALUE;
 
         //score them all.
@@ -231,6 +232,10 @@ public class AI extends RecursiveTask<SinglePlay> {
                 highScore = currentWinner.getScore();
             }
         }
+        if(start == end)
+            System.out.println("Start equals end");
+        if(currentWinner.getScore() == Integer.MAX_VALUE)
+            System.out.println("SOMETHING WENT HORRIBLY WRONG");
         //return smallest
         return currentWinner;
     }
@@ -259,13 +264,14 @@ public class AI extends RecursiveTask<SinglePlay> {
             //get our results back
             for (AI a :
                     ais) {
-                sum += a.join().getScore();
+                a.join();
+                sum += a.getAllPotentialPlays().stream().mapToInt(SinglePlay::getScore).sum();
             }
             //get the sum
             singlePlay.setScore(sum);
         }
         else{
-            singlePlay.setScore(1);
+            singlePlay.setScore(getAllPotentialPlays().size());
         }
     }
 

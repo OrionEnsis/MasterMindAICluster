@@ -9,8 +9,10 @@ public class SettingsPanel extends JPanel {
     private JRadioButton playerButton;
     private JRadioButton aiButton;
     private JRadioButton aiClusterButton;
+    private JRadioButton benchMarkButton;
 
     public JButton startButton;
+    public JButton resetButton;
 
     public static void main(String[] args){
         JFrame frame = new JFrame("Settings");
@@ -53,22 +55,36 @@ public class SettingsPanel extends JPanel {
         add(aiClusterButton,gridBagConstraints);
         buttonGroup.add(this.aiClusterButton);
 
+         gridBagConstraints.gridy = 0;
+         gridBagConstraints.gridx = 4;
+         benchMarkButton = new JRadioButton("Benchmark");
+         add(benchMarkButton,gridBagConstraints);
+         buttonGroup.add(this.benchMarkButton);
+
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridx = 0;
         gridBagConstraints.ipadx = 2;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 2;
         startButton = new JButton("Start");
         add(startButton,gridBagConstraints);
 
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.ipadx = 2;
+        resetButton = new JButton("Reset");
+        add(resetButton,gridBagConstraints);
+
     }
 
-    public int getSelected(){
-        if(playerButton.isSelected()){
+    public int getSelected() {
+        if (playerButton.isSelected()) {
             return 0;
-        } else if (aiButton.isSelected()){
+        } else if (aiButton.isSelected()) {
             return 1;
-        }else if(aiClusterButton.isSelected()){
+        } else if (aiClusterButton.isSelected()) {
             return 2;
+        } else if (benchMarkButton.isSelected()) {
+            return 3;
         }
         return -1;
     }

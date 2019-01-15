@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -105,6 +106,8 @@ public class Client {
             System.out.println("Size " + ai.getAllPotentialPlays().size());
             SinglePlay play = pool.invoke(ai);
             System.out.println("play calculated");
+            System.out.println("play " + Arrays.toString(play.getPlayAsArray()));
+            System.out.println("score " + play.getScore());
             output.writeObject(play);
             System.out.println("play sent" + play);
             output.flush();

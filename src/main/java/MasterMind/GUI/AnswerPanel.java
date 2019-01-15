@@ -36,6 +36,9 @@ public class AnswerPanel extends JPanel {
         setLayout(gridLayout);
     }
 
+    void reset(){
+        answers.forEach(x->x.setBackground(Color.black));
+    }
     void revealAnswers(int[] answers){
         for (int i = 0; i < answers.length; i++) {
             this.answers.get(i).setBackground(GUI.COLORS[answers[i]]);

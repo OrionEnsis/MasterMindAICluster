@@ -21,8 +21,8 @@ public class Game implements Serializable {
     private int[] answer;
     private boolean hasWon = false;
     private boolean hasLost = false;
-    public List<int[]> pastGuesses;
-    public List<int[]> pastResults;
+    public ArrayList<int[]> pastGuesses;
+    public ArrayList<int[]> pastResults;
 
     /**
      * The constructor.
@@ -40,7 +40,14 @@ public class Game implements Serializable {
         pastResults = new ArrayList<>();
         generateAnswer();
     }
-
+    void reset(){
+        this.currentGuesses = 0;
+        pastGuesses = new ArrayList<>();
+        pastResults = new ArrayList<>();
+        generateAnswer();
+        hasWon = false;
+        hasLost = false;
+    }
     /**
      * this method creates an answer to play the game.
      */

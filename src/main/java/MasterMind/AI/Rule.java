@@ -62,6 +62,7 @@ class Rule implements Serializable {
         }
 
         //TODO fix this section.
+        /*
         for (int i = 0; i < compareGuess.length; i++) {
             if(dupeStopper[i] != 1){
                 for (int j = 0; j < compareGuess.length; j++) {
@@ -72,7 +73,7 @@ class Rule implements Serializable {
                     }
                 }
             }
-        }
+        }*/
 
         return match == mustHave;// && mayHave == shift;
     }

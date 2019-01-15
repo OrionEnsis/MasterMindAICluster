@@ -20,6 +20,10 @@ public class GUI extends JFrame{
         setupSettings();
 
     }
+    public void reset(){
+        settingsPanel.startButton.setEnabled(true);
+        gameBoardPanel.reset();
+    }
     void setupSettings(){
         settingsPanel = new SettingsPanel();
         GridBagConstraints gridBagConstraints = new GridBagConstraints();

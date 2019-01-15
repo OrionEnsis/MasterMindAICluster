@@ -30,6 +30,12 @@ public class PegResultsPanel extends JPanel {
         }
     }
 
+    void reset(){
+        for (Component c:
+                getComponents()) {
+            c.setBackground(resultColors[0]);
+        }
+    }
 
     public void setResults(int[] colors){
         Component[] c = getComponents();
